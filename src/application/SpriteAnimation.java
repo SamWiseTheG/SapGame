@@ -1,4 +1,5 @@
 /*package application;
+
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.geometry.Rectangle2D;
@@ -44,5 +45,4 @@ public class SpriteAnimation extends Transition{
 		}
 	}
 }
-
 */
