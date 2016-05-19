@@ -35,9 +35,7 @@ public abstract class GameLoop
 	boolean gotHurt=false;
 	boolean jumping=false;
 	int movementSpeed=15;
-
-	Wall wall;
-
+	int jumpHeight=50;
 
 	////Make Platforms move
 	//	TranslateTransition tPlatform;
@@ -92,7 +90,7 @@ public abstract class GameLoop
 					spacePressed=true;
 					jumping=true;
 					TranslateTransition t1 = new TranslateTransition(Duration.millis(300),mainChar.mainCharField);
-					t1.setByY(-50);
+					t1.setByY(-jumpHeight);
 
 					TranslateTransition t2 = new TranslateTransition(Duration.millis(100),mainChar.mainCharField);
 					t2.setByY(0);
@@ -118,7 +116,6 @@ public abstract class GameLoop
 					mainChar.punch(getClosestWall());
 				}
 				break;
-
 
 				//----------------START DEVELOPMENT TOOLS-----------------
 
@@ -309,6 +306,10 @@ public abstract class GameLoop
 			{
 				health.addHealth();
 				gotHealth=true;
+			}
+			if(p.getType()==1)
+			{
+				jumpHeight=100;
 			}
 		}
 	}
