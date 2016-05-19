@@ -116,13 +116,13 @@ public abstract class GameLoop
 			case G:
 				if(cheatMode)
 				{
-					mainChar.mainCharField.setFill(Color.RED);
+					//mainChar.mainCharField.setFill(Color.GREEN);
 					movementSpeed=30;
 					cheatMode=false;
 				}
 				else
 				{
-					mainChar.mainCharField.setFill(Color.GREEN);
+					//mainChar.mainCharField.setFill(Color.BLUE);
 					movementSpeed=2;
 					cheatMode=true;
 				}
@@ -247,14 +247,14 @@ public abstract class GameLoop
 
 		{
 			//mainChar.setStateCanJump(true);
-			mainChar.mainCharField.setFill(Color.YELLOW);
+			//mainChar.mainCharField.setFill(Color.RED);
 			closestWall.breakWall(closestWall);
 			health.removeHealth();
 		}
 		else
 		{
 			//closestWall.component.setFill(Color.DARKMAGENTA);
-			mainChar.mainCharField.setFill(Color.RED);
+			//mainChar.mainCharField.setFill(Color.YELLOW);
 			//mainChar.setStateCanJump(false);
 		}
 	}

@@ -1,9 +1,16 @@
 package application;
 
 import java.util.*;
+
+import application.SpriteAnimation;
+import javafx.animation.Animation;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class Character 
 {
@@ -20,17 +27,43 @@ public class Character
 	private boolean stateCanJump;
 	private double xPos;
 	private double yPos;
-	Rectangle mainCharField;
+//	Rectangle mainCharField;
+	
+	ImageView mainCharField;
+	
+	//Spritesheet stuff
+	private static final Image IMAGE = new Image("resources/spritesheet2.png");
+	private static final int COLUMNS = 2;
+	private static final int COUNT = 4;
+	private static final int OFFSET_X = 22;
+	private static final int OFFSET_Y = 10;
+	private static final int WIDTH = 135;
+	private static final int HEIGHT = 142;
 	
 	public Character(Group g, int lifeCount)
 	{
 		new Timer().schedule(new TimerTask() {public void run() {stateInvincible = false;}
 		}, 0, 2000);
-		mainCharField = new Rectangle (50,50);
+//		mainCharField = new Rectangle (50,50);
+//		mainCharField.setLayoutX(100);
+//		mainCharField.setLayoutY(0);
+//		mainCharField.setFill(Color.TRANSPARENT);
+//		g.getChildren().add(mainCharField);
+		
+		mainCharField = new ImageView(IMAGE);
+		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 		mainCharField.setLayoutX(100);
-		mainCharField.setLayoutY(0);
-		mainCharField.setFill(Color.RED);
+		mainCharField.setLayoutY(-2);
+		
+		Animation animation = new SpriteAnimation(
+				mainCharField, Duration.millis(1000),
+				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
+				WIDTH, HEIGHT
+		);
 		g.getChildren().add(mainCharField);
+		animation.setCycleCount(Animation.INDEFINITE);
+		animation.play();
+	
 	}
 	
 	public void jump()
