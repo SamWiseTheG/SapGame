@@ -33,7 +33,7 @@ public abstract class GameLoop
 	boolean cheatMode=false;
 	boolean gotHealth=false;
 	boolean gotHurt=false;
-	boolean jumping=true;
+	boolean jumping=false;
 	int movementSpeed=15;
 
 	Wall wall;

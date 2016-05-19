@@ -32,13 +32,13 @@ public class Character
 	ImageView mainCharField;
 	
 	//Spritesheet stuff
-	private static final Image IMAGE = new Image("resources/spritesheet2.png");
+	private static final Image IMAGE = new Image("resources/running.png");
 	private static final int COLUMNS = 2;
 	private static final int COUNT = 4;
-	private static final int OFFSET_X = 22;
-	private static final int OFFSET_Y = 10;
-	private static final int WIDTH = 135;
-	private static final int HEIGHT = 142;
+	private static final int OFFSET_X = 5;
+	private static final int OFFSET_Y = 5;
+	private static final int WIDTH = 116;
+	private static final int HEIGHT = 120;
 	
 	public Character(Group g, int lifeCount)
 	{
