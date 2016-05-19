@@ -2,6 +2,8 @@ package application;
 
 import java.util.Random;
 import javafx.animation.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
@@ -12,7 +14,7 @@ import javafx.util.Duration;
 
 public abstract class GameLoop
 {
-	//private boolean spacePressed=false;
+	private boolean spacePressed=false;
 	double stageWidth;
 	double stageHeight;
 	Enemy e;
@@ -31,11 +33,12 @@ public abstract class GameLoop
 	boolean cheatMode=false;
 	boolean gotHealth=false;
 	boolean gotHurt=false;
+	boolean jumping=true;
 	int movementSpeed=15;
 
 	Wall wall;
-	
-	
+
+
 	////Make Platforms move
 	//	TranslateTransition tPlatform;
 	//	ParallelTransition ptGravity;
@@ -75,8 +78,8 @@ public abstract class GameLoop
 
 	public void stop(KeyEvent k, Rectangle r)
 	{
-//		if(k.getCode()==KeyCode.A)
-//			spacePressed=false;
+		//		if(k.getCode()==KeyCode.A)
+		//			spacePressed=false;
 	}
 
 	public void act(KeyEvent k)
@@ -84,10 +87,10 @@ public abstract class GameLoop
 		switch(k.getCode())				
 		{
 			case SPACE:
-				if (mainChar.getStateCanJump())
+				if(!spacePressed)
 				{
-//					spacePressed=true;
-					falling=false;
+					spacePressed=true;
+					jumping=true;
 					TranslateTransition t1 = new TranslateTransition(Duration.millis(300),mainChar.mainCharField);
 					t1.setByY(-50);
 
@@ -97,8 +100,15 @@ public abstract class GameLoop
 					SequentialTransition st = new SequentialTransition();
 					st.getChildren().addAll(t1,t2);
 					st.play();
-					//st.setOnFinished(h ->canJump());
+					st.setOnFinished(new EventHandler<ActionEvent>(){
+						public void handle(ActionEvent arg0) 
+						{
+							falling=true;
+							jumping=false;
+						}
+					});			
 				}
+
 				break;
 
 				//punch
@@ -140,15 +150,15 @@ public abstract class GameLoop
 				tttt.play();
 				break;
 
-			case W:
-				if (mainChar.getStateCanJump())
-				{
-					//spacePressed=true;
-					TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-					ttUp.setByY(-100);
-					ttUp.play();
-				}
-				break;
+//			case W:
+//				if (mainChar.getStateCanJump())
+//				{
+//					//spacePressed=true;
+//					TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
+//					ttUp.setByY(-100);
+//					ttUp.play();
+//				}
+//				break;
 
 			case S:
 				if(!mainChar.isStateOnPlatform())
@@ -175,15 +185,22 @@ public abstract class GameLoop
 		//ptGravity = new ParallelTransition();
 		//ptGravity.getChildren().addAll(tt,tPlatform);
 		tt.setByY(5);
-		if(falling && !cheatMode)	
+		if(!jumping)
 		{
-			mainChar.setStateCanJump(false);
-			tt.play();
+			if(falling && !cheatMode)	
+			{
+				mainChar.setStateCanJump(false);
+				tt.play();
+			}
+			else
+			{
+				mainChar.setStateCanJump(true);
+			}
 		}
-		else
-		{
-			mainChar.setStateCanJump(true);
-		}
+	}
+	public void canJump() 
+	{
+		spacePressed=false;
 	}
 
 	public void checkForPlatformCollisions()
@@ -202,6 +219,7 @@ public abstract class GameLoop
 		{
 			mainChar.setStateOnPlatform(true);
 			falling=false;
+			canJump();
 		}
 		else
 		{
@@ -306,7 +324,7 @@ public abstract class GameLoop
 			}		
 		}
 	}
-	
+
 	public PowerUp getClosestPowerUp()
 	{
 		PowerUp closestPowerUp = PowerUp.powerUpArray.get(0);
@@ -328,7 +346,7 @@ public abstract class GameLoop
 		}
 		return closestPowerUp;
 	}
-	
+
 	public Enemy getClosestEnemie()
 	{
 		Enemy closestEnemy = Enemy.enemiesArray.get(0);
