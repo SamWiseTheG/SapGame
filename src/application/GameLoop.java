@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -14,6 +15,7 @@ import javafx.util.Duration;
 
 public abstract class GameLoop
 {
+	
 	private boolean spacePressed=false;
 	double stageWidth;
 	double stageHeight;
@@ -34,11 +36,11 @@ public abstract class GameLoop
 	boolean gotHealth=false;
 	boolean gotHurt=false;
 	boolean jumping=false;
-	int movementSpeed=15;
+	int movementSpeed=5;
 
 	Wall wall;
 
-
+	
 	////Make Platforms move
 	//	TranslateTransition tPlatform;
 	//	ParallelTransition ptGravity;
@@ -214,8 +216,8 @@ public abstract class GameLoop
 		closestPlat.component.setFill(Color.ORANGE);
 
 		if ( (charMaxY>=(closestPlat.getMinY()-5)) && ( charMaxY<=(closestPlat.getMinY()+5) ) 
-				&& ( charMinX <= closestPlat.getMaxX()) 
-				&& (charMaxX >= closestPlat.getMinX()) )
+				&& ( charMinX+20 <= closestPlat.getMaxX()) 
+				&& (charMaxX-12 >= closestPlat.getMinX()) )
 		{
 			mainChar.setStateOnPlatform(true);
 			falling=false;
