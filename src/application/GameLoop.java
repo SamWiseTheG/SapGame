@@ -14,8 +14,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 //hiiii
 public abstract class GameLoop
-{
-	
+{	
 	private boolean spacePressed=false;
 	double stageWidth;
 	double stageHeight;
@@ -38,7 +37,7 @@ public abstract class GameLoop
 	boolean jumping=false;
 	int jumpHeight=50;
 
-	int movementSpeed=5;
+	int movementSpeed=15;
 
 	Wall wall;
 	////Make Platforms move
@@ -107,6 +106,7 @@ public abstract class GameLoop
 						{
 							falling=true;
 							jumping=false;
+							spacePressed=true;
 						}
 					});			
 				}
