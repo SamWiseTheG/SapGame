@@ -1,5 +1,9 @@
 package application;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import application.SpriteAnimation;
@@ -35,13 +39,16 @@ public class Character
 	private static final Image IMAGE = new Image("resources/running.png");
 	private static final int COLUMNS = 2;
 	private static final int COUNT = 4;
-	private static final int OFFSET_X = 5;
-	private static final int OFFSET_Y = 5;
-	private static final int WIDTH = 116;
-	private static final int HEIGHT = 120;
+	private static final int OFFSET_X = 0;
+	private static final int OFFSET_Y = 0;
+	private static final int WIDTH = 59;
+	private static final int HEIGHT = 60;
+	
+
 	
 	public Character(Group g, int lifeCount)
 	{
+		
 		new Timer().schedule(new TimerTask() {public void run() {stateInvincible = false;}
 		}, 0, 2000);
 //		mainCharField = new Rectangle (50,50);
@@ -56,7 +63,7 @@ public class Character
 		mainCharField.setLayoutY(-2);
 		
 		Animation animation = new SpriteAnimation(
-				mainCharField, Duration.millis(1000),
+				mainCharField, Duration.millis(400),
 				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
 				WIDTH, HEIGHT
 		);
@@ -64,6 +71,13 @@ public class Character
 		animation.setCycleCount(Animation.INDEFINITE);
 		animation.play();
 	
+	}
+	
+	
+	public Image loadCharPunching() throws IOException {
+		final InputStream punch = Files.newInputStream(Paths.get("resources/punch.png"));
+		Image charPunch = new Image(punch);
+		return charPunch;
 	}
 	
 	public void jump()
