@@ -56,7 +56,7 @@ public class World extends GameLoop
 
 		mainChar = new Character(componentsGroup, 3);
 		new Enemy(componentsGroup, 200,50);
-		health = new HUD(componentsGroup, 3);
+		hud = new HUD(componentsGroup, 3);
 	}
 
 	public static void createPlatform(Group componentsGroup, Random n)
