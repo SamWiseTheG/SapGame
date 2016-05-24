@@ -36,7 +36,8 @@ public class Character
 	ImageView mainCharField;
 	
 	//Spritesheet stuff
-	private static final Image IMAGE = new Image("resources/running.png");
+	private static final Image PUNCH = new Image("resources/punch.png");
+	private static final Image RUNNING = new Image("resources/running.png");
 	private static final int COLUMNS = 2;
 	private static final int COUNT = 4;
 	private static final int OFFSET_X = 0;
@@ -57,28 +58,28 @@ public class Character
 //		mainCharField.setFill(Color.TRANSPARENT);
 //		g.getChildren().add(mainCharField);
 		
-		mainCharField = new ImageView(IMAGE);
+		mainCharField = new ImageView(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 		mainCharField.setLayoutX(100);
 		mainCharField.setLayoutY(-2);
+		g.getChildren().add(mainCharField);
 		
 		Animation animation = new SpriteAnimation(
 				mainCharField, Duration.millis(400),
 				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
 				WIDTH, HEIGHT
 		);
-		g.getChildren().add(mainCharField);
 		animation.setCycleCount(Animation.INDEFINITE);
 		animation.play();
 	
 	}
-	
-	
-	public Image loadCharPunching() throws IOException {
-		final InputStream punch = Files.newInputStream(Paths.get("resources/punch.png"));
-		Image charPunch = new Image(punch);
-		return charPunch;
-	}
+//	
+//	public void loadPunch() {
+//		mainCharField.setImage(PUNCH);
+//		mainCharField.setLayoutX(100);
+//		mainCharField.setLayoutY(-2);
+//		g.getChildren().add(mainCharField);
+//	}
 	
 	public void jump()
 	{

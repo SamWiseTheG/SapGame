@@ -1,18 +1,25 @@
 package application;
 
 import java.util.Random;
-import javafx.scene.*;
+
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
-import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.*;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class World extends GameLoop 
 {
 	Image rF;
 	Rectangle rainforest;
-	private static final String rainforestURL = "resources/background.png";
-
+//	private static final String rainforestURL = "resources/greenBackground.png";
+	private static final Image RAINFOREST = new Image("resources/greenBackground.png");
+	protected ImageView background;
+	
 	public World(Stage primaryStage) 
 	{
 		super(primaryStage);
@@ -23,10 +30,21 @@ public class World extends GameLoop
 	@Override
 	public void initBackground() 
 	{
-		rF = new Image(rainforestURL);
-		rainforest = new Rectangle(1000, 600);
-		rainforest.setFill(new ImagePattern(rF, 0,0, 1000, 600, false));
-		componentsGroup.getChildren().add(rainforest);
+		background = new ImageView(RAINFOREST);
+		TranslateTransition tt = new TranslateTransition(Duration.millis(1000), background);
+		
+		tt.setFromX(0);
+		tt.setToX(-1000);
+		tt.setCycleCount(Timeline.INDEFINITE);
+		componentsGroup.getChildren().add(background);
+		tt.play();
+		
+		
+
+//		rF = new Image(rainforestURL);
+//		rainforest = new Rectangle(1000, 600);
+//		rainforest.setFill(new ImagePattern(rF, 0,0, 1000, 600, false));
+//		componentsGroup.getChildren().add(rainforest);
 	}
 
 	@Override
@@ -61,6 +79,7 @@ public class World extends GameLoop
 
 	public static void createPlatform(Group componentsGroup, Random n)
 	{
+		
 		new Platform(componentsGroup, 900,(n.nextInt(20))*40,100);
 		
 	}

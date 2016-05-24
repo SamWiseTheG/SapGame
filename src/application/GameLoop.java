@@ -206,6 +206,7 @@ public abstract class GameLoop
 			case C:
 				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 20)
 				{
+//					mainChar.loadPunch();
 					mainChar.punch(getClosestWall());
 				}
 				break;

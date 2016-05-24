@@ -35,6 +35,7 @@ public class Platform extends RectangleComponent
 		//Add component to root of passed in scene
 		componentsGroup.getChildren().add(component);
 	}
+	
 	public static ArrayList<Platform> getPlatformsArrayList() 
 	{
 		return platformsArray;
