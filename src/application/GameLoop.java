@@ -1,18 +1,28 @@
 package application;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Optional;
 import java.util.Random;
-import javafx.animation.*;
+
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+
+import javafx.scene.control.TextInputDialog;
+import javafx.animation.Animation;
+import javafx.animation.AnimationTimer;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.*;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 public abstract class GameLoop
 {	
 	private boolean spacePressed=false;
@@ -30,21 +40,28 @@ public abstract class GameLoop
 	Character mainChar;
 	//Menu m;
 	Random r= new Random();
+
+
 	boolean falling=true;
 	boolean cheatMode=false;
 	boolean gotHealth=false;
 	boolean gotHurt=false;
 	boolean jumping=false;
-	int jumpHeight=100;
-	int movementSpeed=20;
+
 	boolean dPressed=false;
 	boolean aPressed=false;
+	boolean checkDeath=false;
+
+	int jumpHeight=100;
+	int movementSpeed=20;
+
 	double jumpTimer;
 	double invincibleTimer;
+	double startTime=System.currentTimeMillis();
 
+	double score=0;
 	boolean hasJump=false;
 	boolean hasInvincible=false;
-
 
 	////Make Platforms move
 	//	TranslateTransition tPlatform;
@@ -71,20 +88,49 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
-
-				gravity();
-				//moveChar();
-				checkForPlatformCollisions();
-				checkForWallCollisions();
-				checkbottomCollision();
-				checkPowerUpCollision();
-				checkEnemieCollision();
-				scene.setOnKeyPressed(k -> actPress(k));
-				scene.setOnKeyReleased(k -> actRelease(k));
-
+				//if(hud.healthCount.size()>0)
+				//{
+					gravity();
+					//moveChar();
+					checkForPlatformCollisions();
+					checkForWallCollisions();
+					checkbottomCollision();
+					checkPowerUpCollision();
+					checkEnemieCollision();
+					scene.setOnKeyPressed(k -> actPress(k));
+					scene.setOnKeyReleased(k -> actRelease(k));
+					//System.out.println(hud.healthCount.size());
+				//}
+//				else
+//				{
+//					this.stop();
+//					if((hud.healthCount.size())<=0)
+//					{
+//						System.out.println("here");
+//						score=System.currentTimeMillis()-startTime;
+//						TextInputDialog dialog = new TextInputDialog();
+//						dialog.setTitle("Score");
+//						dialog.setHeaderText("Score");
+//						dialog.setContentText("Please enter your name:");
+//						Optional<String> result = dialog.showAndWait();
+//						try 
+//						{
+//							File highScores = new File("src/resources/highScores.txt");
+//							PrintWriter pr = new PrintWriter(highScores);
+//							pr.println("High score: " + result.get()+ " - " + (int)score);
+//							pr.close();
+//						}
+//						catch(Exception e)
+//						{
+//							System.out.println("FILE ERROR");
+//						}
+//					}
+//				}
 
 			}
 		}.start();
+
+
 	}
 
 	public void stop(KeyEvent k, Rectangle r)
