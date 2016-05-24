@@ -31,7 +31,7 @@ public class World extends GameLoop
 	public void initBackground() 
 	{
 		background = new ImageView(RAINFOREST);
-		TranslateTransition tt = new TranslateTransition(Duration.millis(1000), background);
+		TranslateTransition tt = new TranslateTransition(Duration.millis(10000), background);
 		
 		tt.setFromX(0);
 		tt.setToX(-1000);
