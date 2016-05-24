@@ -1,5 +1,10 @@
 package application;
 
+import java.io.File;
+import java.util.Scanner;
+
+import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
+
 import javafx.event.*;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -12,10 +17,23 @@ import javafx.stage.Stage;
 public class Menu
 {
 	Stage stage = new Stage();
-	Scene menuScene;
-	
+	Scene menuScene;	
+	String highScoreString=" ";
 	public Menu (Stage primaryStage)
 	{
+		try 
+		{
+			File highScores = new File("src/resources/highScores.txt");
+			Scanner input =new Scanner(highScores);
+			highScoreString = input.nextLine();
+			input.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("FILE ERROR");
+		}
+		System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
+
 		Group menuRoot = new Group();
 		Image vr = new Image("resources/background.png", 1000, 600, false, false);
 		ImageView iv = new ImageView(vr);		
@@ -47,6 +65,10 @@ public class Menu
 			//title.setLayoutX(250);
 			title.setFill(Color.ORANGE);
 			title.setFont(Font.font ("Verdana", FontWeight.BOLD, 30));
+		Text highScoreText = new Text(20, 20, highScoreString);
+			highScoreText.setFont(Font.font ("Verdana", FontWeight.BOLD, 20));
+			highScoreText.setFill(Color.GOLD);
+
 		Button back = new Button("back");		
 			
 		close.setOnAction(new EventHandler<ActionEvent>()
@@ -67,7 +89,7 @@ public class Menu
 			}
 		});
 					
-		menuRoot.getChildren().addAll(iv, play, instructions, credits, close, title);		
+		menuRoot.getChildren().addAll(iv, play, instructions, credits, close, title, highScoreText);		
 		menuScene = new Scene (menuRoot, 1000, 600);
 		
 		primaryStage.setScene(menuScene);
