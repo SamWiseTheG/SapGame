@@ -5,8 +5,7 @@ import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.Random;
 
-import com.sun.media.jai.codec.PNGEncodeParam.Palette;
-import com.sun.org.apache.xerces.internal.util.Status;
+
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -16,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -80,8 +80,7 @@ public abstract class GameLoop
 		initStage();
 		root.getChildren().add(componentsGroup);
 		scene = new Scene (root, 1000, 600);
-		movePlatform();
-
+		//movePlatform();
 		//tPlatform = new TranslateTransition(Duration.seconds(5), f.component);
 		//tPlatform.setByX(-1000);
 
@@ -90,51 +89,47 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
-				//if(hud.healthCount.size()>0)
-				//{
-				gravity();
-				//moveChar();
-				checkForPlatformCollisions();
-				checkForWallCollisions();
-				checkbottomCollision();
-				generatePlatform();
-				//deletePlatform();
-				checkPowerUpCollision();
-				checkEnemieCollision();
-				scene.setOnKeyPressed(k -> actPress(k));
-				scene.setOnKeyReleased(k -> actRelease(k));
-				//System.out.println(hud.healthCount.size());
-				//}
-				//				else
-				//				{
-				//					this.stop();
-				//					if((hud.healthCount.size())<=0)
-				//					{
-				//						System.out.println("here");
-				//						score=System.currentTimeMillis()-startTime;
-				//						TextInputDialog dialog = new TextInputDialog();
-				//						dialog.setTitle("Score");
-				//						dialog.setHeaderText("Score");
-				//						dialog.setContentText("Please enter your name:");
-				//						Optional<String> result = dialog.showAndWait();
-				//						try 
-				//						{
-				//							File highScores = new File("src/resources/highScores.txt");
-				//							PrintWriter pr = new PrintWriter(highScores);
-				//							pr.println("High score: " + result.get()+ " - " + (int)score);
-				//							pr.close();
-				//						}
-				//						catch(Exception e)
-				//						{
-				//							System.out.println("FILE ERROR");
-				//						}
-				//					}
-				//				}
+				if(hud.healthCount.size()>0)
+				{
+					gravity();
+					//moveChar();
+					checkForPlatformCollisions();
+					checkForWallCollisions();
+					checkbottomCollision();
+					generatePlatform();
+					//deletePlatform();
+					checkPowerUpCollision();
+					checkEnemieCollision();
+					score=System.currentTimeMillis()-startTime;
+					scene.setOnKeyPressed(k -> actPress(k));
+					scene.setOnKeyReleased(k -> actRelease(k));
+					//System.out.println(hud.healthCount.size());
+				}
+				else 
+				{
+					this.stop();
+				}
 
 			}
 		}.start();
-
-
+			//System.out.println("here");
+			//score=System.currentTimeMillis()-startTime;
+			TextInputDialog dialog = new TextInputDialog();
+			dialog.setTitle("Score");
+			dialog.setHeaderText("Score");
+			dialog.setContentText("Please enter your name:");
+			Optional<String> result = dialog.showAndWait();
+			try 
+			{
+				File highScores = new File("src/resources/highScores.txt");
+				PrintWriter pr = new PrintWriter(highScores);
+				pr.println("High score: " + result.get()+ " - " + (int)score);
+				pr.close();
+			}
+			catch(Exception e)
+			{
+				System.out.println("FILE ERROR");
+			}
 	}
 
 	public void stop(KeyEvent k, Rectangle r)
@@ -515,12 +510,13 @@ public abstract class GameLoop
 		tt.setAutoReverse(true);
 		tt.play();
 	}
-	private void generatePlatform()
+	private synchronized void generatePlatform()
 	{
 		double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
 		double charMinY = mainChar.mainCharField.getBoundsInParent().getMaxY();
 		double charMinX = mainChar.mainCharField.getBoundsInParent().getMinX();
 		double charMaxX = mainChar.mainCharField.getBoundsInParent().getMaxX();
+
 		//Min + (int)(Math.random() * ((Max - Min) + 1))
 		//int x=(400+(int)(charMaxX+ (Math.random() * ((400)) + 1)));
 		int x= (int)(Math.random()*350)+(int)charMaxX;
@@ -531,20 +527,26 @@ public abstract class GameLoop
 		//System.out.println("x: " + x);
 		//System.out.println("y: " + y);
 		//System.out.println("width: " + width);
-		TranslateTransition tt = new TranslateTransition();
 
 		if(Platform.getPlatformsArrayList().size()<=5)
 		{
 			Platform p = new Platform(componentsGroup, x, y,width);
 			Duration speed=Duration.millis(5000);
-			tt = new TranslateTransition(speed, p.component);
+			TranslateTransition tt  = new TranslateTransition(speed, p.component);
 			tt.setFromX(x);
-			tt.setToX(-350);
-			tt.setCycleCount(2);
-			tt.setAutoReverse(true);
+			tt.setToX(-500);
+			//tt.setCycleCount(2);
+			//tt.setAutoReverse(true);
+
 			tt.play();
+			tt.setOnFinished(new EventHandler<ActionEvent>(){
+				public void handle(ActionEvent arg0) 
+				{
+					deletePlatform();
+				}
+			});
+			//System.out.println("Array size: " + Platform.getPlatformsArrayList().size());
 		}
-		deletePlatform();
 	}
 	private void deletePlatform()
 	{
