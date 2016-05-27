@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -17,9 +18,11 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -42,6 +45,7 @@ public abstract class GameLoop
 	Random r= new Random();
 
 
+	private static final Image DEATH = new Image("resources/dead.png");
 	boolean falling=true;
 	boolean cheatMode=false;
 	boolean gotHealth=false;
@@ -158,6 +162,9 @@ public abstract class GameLoop
 	{
 		switch(k.getCode())				
 		{
+			case ESCAPE:
+				stage.close();
+				break;
 			case SPACE:
 				if(!spacePressed && mainChar.getStateCanJump())
 				{
@@ -494,8 +501,11 @@ public abstract class GameLoop
 
 		if(charMaxY>=600)
 		{
+			
 			hud.removeHealth();
 			mainChar.setStateAlive(false);
+			showDeathScreen(componentsGroup);
+			
 		}
 	}
 
@@ -528,5 +538,22 @@ public abstract class GameLoop
 	{
 		stage.setScene(scene);
 		stage.centerOnScreen();
+	}
+	
+	public void showDeathScreen(Group g) {
+		ImageView death = new ImageView(DEATH);
+		g.getChildren().add(death);
+		
+		Button backToMenu = new Button("Back To Menu");
+		backToMenu.setLayoutX(450);
+		backToMenu.setLayoutY(500);
+		backToMenu.setFont(new Font("Roboto", 15));
+		backToMenu.setPrefSize(150, 50);
+		backToMenu.setOnAction(e -> backToMenuScreen(stage));	
+		componentsGroup.getChildren().add(backToMenu);
+	}
+	
+	public void backToMenuScreen(Stage stage) {
+		new Menu(stage).displayMenu();
 	}
 }

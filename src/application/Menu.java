@@ -9,6 +9,8 @@ import javafx.event.*;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
@@ -16,6 +18,7 @@ import javafx.stage.Stage;
 
 public class Menu
 {
+	
 	Stage stage = new Stage();
 	Scene menuScene;	
 	String highScoreString=" ";
@@ -98,10 +101,16 @@ public class Menu
 		stage=primaryStage;
 		stage.show();
 		
+		menuScene.setOnKeyPressed(k -> actionPressed(k));
 		back.setOnAction(e -> setprimaryStage(primaryStage, menuScene));
 		instructions.setOnAction(e -> setInstructionsScene(primaryStage, back));
 		credits.setOnAction(e -> setCreditsScene(primaryStage, back));	
 	}
+	
+	public void actionPressed(KeyEvent k) {
+		if(k.getCode() == KeyCode.ESCAPE)
+			stage.close();
+	}  
 	
 	public void setprimaryStage (Stage mStage, Scene altScene)
 	{
@@ -157,6 +166,7 @@ public class Menu
 	
 	public void displayMenu()
 	{
+		stage.setResizable(false);
 		stage.setScene(menuScene);
 		stage.centerOnScreen();
 	}

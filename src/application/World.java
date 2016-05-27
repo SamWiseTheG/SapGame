@@ -2,12 +2,16 @@ package application;
 
 import java.util.Random;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -16,8 +20,7 @@ public class World extends GameLoop
 {
 	Image rF;
 	Rectangle rainforest;
-//	private static final String rainforestURL = "resources/greenBackground.png";
-	private static final Image RAINFOREST = new Image("resources/greenBackground.png");
+	private static final Image RAINFOREST = new Image("resources/greenBackground.jpg");
 	protected ImageView background;
 	
 	public World(Stage primaryStage) 
@@ -27,14 +30,29 @@ public class World extends GameLoop
 		super.stageHeight=600;
 	}
 
-	@Override
+	@Override 
 	public void initBackground() 
 	{
 		background = new ImageView(RAINFOREST);
-		TranslateTransition tt = new TranslateTransition(Duration.millis(10000), background);
+		final Rectangle rect = new Rectangle(1000, 600);
+		rect.setFill(Color.BLACK);
+		rect.setOpacity(0.6);
+//		final Rectangle rect = new Rectangle(2048, 50);
+//		rect.setFill(Color.RED);
+//		
+//		final Timeline timeline = new Timeline();
+//		timeline.setCycleCount(Timeline.INDEFINITE);
+//		final KeyValue kv = new KeyValue(background.xProperty(), -1000);
+//		final KeyFrame kf = new KeyFrame(Duration.millis(3000), kv);
+//		componentsGroup.getChildren().add(background);
+//		componentsGroup.getChildren().add(rect);
+//		timeline.getKeyFrames().add(kf);
+//		timeline.play();
 		
+	  	TranslateTransition tt = new TranslateTransition(Duration.seconds(10), background);
 		tt.setFromX(0);
-		tt.setToX(-1000);
+		tt.setToX(-999);
+		tt.setInterpolator(Interpolator.LINEAR);
 		tt.setCycleCount(Timeline.INDEFINITE);
 		componentsGroup.getChildren().add(background);
 		tt.play();
