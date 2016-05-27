@@ -5,9 +5,9 @@ import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.Random;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import com.sun.media.jai.codec.PNGEncodeParam.Palette;
+import com.sun.org.apache.xerces.internal.util.Status;
 
-import javafx.scene.control.TextInputDialog;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.SequentialTransition;
@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public abstract class GameLoop
-{	
+{
 	private boolean spacePressed=false;
 	double stageWidth;
 	double stageHeight;
@@ -71,6 +71,8 @@ public abstract class GameLoop
 
 	public GameLoop(Stage primaryStage)
 	{
+		System.out.println("here");
+
 		stage=primaryStage;
 		root = new Group();
 		componentsGroup = new Group();
@@ -90,42 +92,44 @@ public abstract class GameLoop
 			{
 				//if(hud.healthCount.size()>0)
 				//{
-					gravity();
-					//moveChar();
-					checkForPlatformCollisions();
-					checkForWallCollisions();
-					checkbottomCollision();
-					checkPowerUpCollision();
-					checkEnemieCollision();
-					scene.setOnKeyPressed(k -> actPress(k));
-					scene.setOnKeyReleased(k -> actRelease(k));
-					//System.out.println(hud.healthCount.size());
+				gravity();
+				//moveChar();
+				checkForPlatformCollisions();
+				checkForWallCollisions();
+				checkbottomCollision();
+				generatePlatform();
+				//deletePlatform();
+				checkPowerUpCollision();
+				checkEnemieCollision();
+				scene.setOnKeyPressed(k -> actPress(k));
+				scene.setOnKeyReleased(k -> actRelease(k));
+				//System.out.println(hud.healthCount.size());
 				//}
-//				else
-//				{
-//					this.stop();
-//					if((hud.healthCount.size())<=0)
-//					{
-//						System.out.println("here");
-//						score=System.currentTimeMillis()-startTime;
-//						TextInputDialog dialog = new TextInputDialog();
-//						dialog.setTitle("Score");
-//						dialog.setHeaderText("Score");
-//						dialog.setContentText("Please enter your name:");
-//						Optional<String> result = dialog.showAndWait();
-//						try 
-//						{
-//							File highScores = new File("src/resources/highScores.txt");
-//							PrintWriter pr = new PrintWriter(highScores);
-//							pr.println("High score: " + result.get()+ " - " + (int)score);
-//							pr.close();
-//						}
-//						catch(Exception e)
-//						{
-//							System.out.println("FILE ERROR");
-//						}
-//					}
-//				}
+				//				else
+				//				{
+				//					this.stop();
+				//					if((hud.healthCount.size())<=0)
+				//					{
+				//						System.out.println("here");
+				//						score=System.currentTimeMillis()-startTime;
+				//						TextInputDialog dialog = new TextInputDialog();
+				//						dialog.setTitle("Score");
+				//						dialog.setHeaderText("Score");
+				//						dialog.setContentText("Please enter your name:");
+				//						Optional<String> result = dialog.showAndWait();
+				//						try 
+				//						{
+				//							File highScores = new File("src/resources/highScores.txt");
+				//							PrintWriter pr = new PrintWriter(highScores);
+				//							pr.println("High score: " + result.get()+ " - " + (int)score);
+				//							pr.close();
+				//						}
+				//						catch(Exception e)
+				//						{
+				//							System.out.println("FILE ERROR");
+				//						}
+				//					}
+				//				}
 
 			}
 		}.start();
@@ -149,7 +153,6 @@ public abstract class GameLoop
 			case A:
 				aPressed=false;
 				break;
-
 			default:
 				break;
 		}
@@ -206,7 +209,7 @@ public abstract class GameLoop
 			case C:
 				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 20)
 				{
-//					mainChar.loadPunch();
+					//					mainChar.loadPunch();
 					mainChar.punch(getClosestWall());
 				}
 				break;
@@ -307,7 +310,7 @@ public abstract class GameLoop
 		double charMinX = mainChar.getMinX();
 		double charMaxX = mainChar.getMaxX();
 
-		closestPlat.component.setFill(Color.ORANGE);
+		//closestPlat.component.setFill(Color.ORANGE);
 
 		if ( (charMaxY>=(closestPlat.getMinY()-5)) && ( charMaxY<=(closestPlat.getMinY()+5) ) 
 				&& ( charMinX+20 <= closestPlat.getMaxX()) 
@@ -321,7 +324,7 @@ public abstract class GameLoop
 		{
 			mainChar.setStateOnPlatform(false);
 			mainChar.setStateCanJump(false);
-			closestPlat.component.setFill(Color.DARKMAGENTA);
+			//closestPlat.component.setFill(Color.DARKMAGENTA);
 			falling=true;
 		}
 		//
@@ -376,6 +379,7 @@ public abstract class GameLoop
 
 	public Wall getClosestWall()
 	{
+
 		Wall closestWall = Wall.wallsArray.get(0);
 
 		double charMaxY = mainChar.getMaxY();
@@ -501,15 +505,57 @@ public abstract class GameLoop
 
 	private void movePlatform()
 	{
-		Platform p = Platform.platformsArray.get(3);
-		Duration speed=Duration.millis(10000);
+		Platform p = Platform.platformsArray.get(0);
+		Duration speed=Duration.millis(5000);
 		TranslateTransition tt = new TranslateTransition(speed, p.component);
 
 		tt.setFromX(500);
-		tt.setToX(50);
+		tt.setToX(-200);
 		tt.setCycleCount(Animation.INDEFINITE);
 		tt.setAutoReverse(true);
 		tt.play();
+	}
+	private void generatePlatform()
+	{
+		double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
+		double charMinY = mainChar.mainCharField.getBoundsInParent().getMaxY();
+		double charMinX = mainChar.mainCharField.getBoundsInParent().getMinX();
+		double charMaxX = mainChar.mainCharField.getBoundsInParent().getMaxX();
+		//Min + (int)(Math.random() * ((Max - Min) + 1))
+		//int x=(400+(int)(charMaxX+ (Math.random() * ((400)) + 1)));
+		int x= (int)(Math.random()*350)+(int)charMaxX;
+		int y= (int)(Math.random()*600)+(int)charMaxY;
+
+		int width=50+(int)(Math.random()*(350+1));
+
+		//System.out.println("x: " + x);
+		//System.out.println("y: " + y);
+		//System.out.println("width: " + width);
+		TranslateTransition tt = new TranslateTransition();
+
+		if(Platform.getPlatformsArrayList().size()<=5)
+		{
+			Platform p = new Platform(componentsGroup, x, y,width);
+			Duration speed=Duration.millis(5000);
+			tt = new TranslateTransition(speed, p.component);
+			tt.setFromX(x);
+			tt.setToX(-350);
+			tt.setCycleCount(2);
+			tt.setAutoReverse(true);
+			tt.play();
+		}
+		deletePlatform();
+	}
+	private void deletePlatform()
+	{
+		for(Platform p : Platform.getPlatformsArrayList())
+		{
+			if(p.getMaxX()<0)
+			{
+				System.out.println("delete platform");
+				p.delete();
+			}
+		}
 	}
 
 	public void moveChar() 

@@ -63,7 +63,6 @@ public class PowerUp
 	{
 		powerUpGroup.getChildren().remove( component );
 		powerUpArray.remove(this);
-
 	}
 	
 	// getter of the array list

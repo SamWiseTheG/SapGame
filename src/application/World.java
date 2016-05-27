@@ -35,12 +35,10 @@ public class World extends GameLoop
 		
 		tt.setFromX(0);
 		tt.setToX(-1000);
+		tt.setAutoReverse(false);
 		tt.setCycleCount(Timeline.INDEFINITE);
 		componentsGroup.getChildren().add(background);
 		tt.play();
-		
-		
-
 //		rF = new Image(rainforestURL);
 //		rainforest = new Rectangle(1000, 600);
 //		rainforest.setFill(new ImagePattern(rF, 0,0, 1000, 600, false));
@@ -50,14 +48,15 @@ public class World extends GameLoop
 	@Override
 	public void initStage() 
 	{
-		for(int i=100; i< 700; i+=100)
-		{
-			new Platform(componentsGroup,i, i, 150);
-		}
+//		for(int i=100; i< 700; i+=100)
+//		{
+//			new Platform(componentsGroup,i, i, 150);
+//		}
 		
 		new Wall(componentsGroup,460, 325, 20, 75);
 		new Wall(componentsGroup,560, 325, 20, 75);
 		//So array isnt empty
+		new Platform(componentsGroup,100, 100, 100);
 		new Wall(componentsGroup,-100, -100, 1, 1);
 		new PowerUp(componentsGroup, -100, -100,1);
 		

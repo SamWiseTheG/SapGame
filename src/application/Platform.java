@@ -2,9 +2,12 @@ package application;
 
 import java.util.ArrayList;
 
+import javafx.animation.Animation;
+import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class Platform extends RectangleComponent
 {
@@ -40,7 +43,10 @@ public class Platform extends RectangleComponent
 	{
 		return platformsArray;
 	}
-	
+	public void delete() 
+	{
+		platformsArray.remove(this);
+	}
 	public static void reset() 
 	{
 		platformsArray.clear();
