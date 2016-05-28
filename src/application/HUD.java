@@ -25,8 +25,9 @@ public class HUD
 
 	public HUD(Group root, int lifeCount) 
 	{
+		healthCountPos = lifeCount;
 		root.getChildren().add(HUDGroup);
-		for (int i = 0; i <= lifeCount-1; i++) 
+		for (int i = 0; i < lifeCount; i++) 
 		{
 			livesView = new ImageView(HEARTS);
 			livesView.setFitWidth(50);
@@ -43,6 +44,7 @@ public class HUD
 			x = x + 35;
 		}
 		healthCountPos = healthCount.size() - 1;
+		
 		cJump.setCenterX(250);
 		cJump.setCenterY(10);
 		cJump.setFill(Color.GREEN);
@@ -50,10 +52,14 @@ public class HUD
 		cInvincible.setCenterY(10);
 		cInvincible.setFill(Color.BLUE);
 	}
-
+	
+	public int getHealth() {
+		return healthCountPos;
+	}
+	
 	public void removeHealth() 
 	{
-		if (healthCountPos > -1) 
+		if (healthCountPos > 0) 
 		{
 			HUDGroup.getChildren().remove(healthCount.get(healthCountPos));
 			healthCount.remove(healthCount.size() - 1);

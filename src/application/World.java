@@ -37,9 +37,7 @@ public class World extends GameLoop
 		final Rectangle rect = new Rectangle(1000, 600);
 		rect.setFill(Color.BLACK);
 		rect.setOpacity(0.6);
-//		final Rectangle rect = new Rectangle(2048, 50);
-//		rect.setFill(Color.RED);
-//		
+		
 //		final Timeline timeline = new Timeline();
 //		timeline.setCycleCount(Timeline.INDEFINITE);
 //		final KeyValue kv = new KeyValue(background.xProperty(), -1000);
@@ -51,18 +49,12 @@ public class World extends GameLoop
 		
 	  	TranslateTransition tt = new TranslateTransition(Duration.seconds(10), background);
 		tt.setFromX(0);
-		tt.setToX(-999);
+		tt.setToX(-1000);
 		tt.setInterpolator(Interpolator.LINEAR);
 		tt.setCycleCount(Timeline.INDEFINITE);
 		componentsGroup.getChildren().add(background);
+		componentsGroup.getChildren().add(rect);
 		tt.play();
-		
-		
-
-//		rF = new Image(rainforestURL);
-//		rainforest = new Rectangle(1000, 600);
-//		rainforest.setFill(new ImagePattern(rF, 0,0, 1000, 600, false));
-//		componentsGroup.getChildren().add(rainforest);
 	}
 
 	@Override
@@ -81,7 +73,7 @@ public class World extends GameLoop
 		
 		//powerup
 		new PowerUp(componentsGroup, 225, 175,1);
-		new PowerUp(componentsGroup, 625, 475,3);
+//		new PowerUp(componentsGroup, 625, 475,3);
 
 		//PowerUp p1= new PowerUp(componentsGroup, 100, 100,1);
 		//PowerUp p2= new PowerUp(componentsGroup, 200, 200,2);
@@ -91,7 +83,7 @@ public class World extends GameLoop
 		//new Platform(componentsGroup, 100.0, 510.0, 1000);
 
 		mainChar = new Character(componentsGroup, 3);
-		new Enemy(componentsGroup, 200,50);
+		new Enemy(componentsGroup, 600,450);
 		hud = new HUD(componentsGroup, 3);
 	}
 

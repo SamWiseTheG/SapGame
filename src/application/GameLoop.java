@@ -92,8 +92,8 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
-				//if(hud.healthCount.size()>0)
-				//{
+				if(hud.healthCount.size()>0)
+				{
 					gravity();
 					//moveChar();
 					checkForPlatformCollisions();
@@ -103,13 +103,18 @@ public abstract class GameLoop
 					checkEnemieCollision();
 					scene.setOnKeyPressed(k -> actPress(k));
 					scene.setOnKeyReleased(k -> actRelease(k));
-					//System.out.println(hud.healthCount.size());
-				//}
-//				else
-//				{
+					
+
+//					System.out.println(hud.healthCount.size());
+				}
+				else
+				{
+					if((hud.healthCount.size() <= 0)) {
+						
+					}
 //					this.stop();
 //					if((hud.healthCount.size())<=0)
-//					{
+//					{ 
 //						System.out.println("here");
 //						score=System.currentTimeMillis()-startTime;
 //						TextInputDialog dialog = new TextInputDialog();
@@ -129,7 +134,7 @@ public abstract class GameLoop
 //							System.out.println("FILE ERROR");
 //						}
 //					}
-//				}
+				}
 
 			}
 		}.start();
@@ -447,7 +452,8 @@ public abstract class GameLoop
 			{
 				hud.removeHealth();
 				gotHurt=true;
-			}		
+			}
+			
 		}
 	}
 
@@ -504,8 +510,6 @@ public abstract class GameLoop
 			
 			hud.removeHealth();
 			mainChar.setStateAlive(false);
-			showDeathScreen(componentsGroup);
-			
 		}
 	}
 

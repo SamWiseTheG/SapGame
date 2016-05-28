@@ -58,11 +58,15 @@ public class Character
 //		mainCharField.setFill(Color.TRANSPARENT);
 //		g.getChildren().add(mainCharField);
 		
+		loadRunning(g); 
+	}
+	
+	public void loadRunning(Group charGroup) {
 		mainCharField = new ImageView(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 		mainCharField.setLayoutX(100);
 		mainCharField.setLayoutY(-2);
-		g.getChildren().add(mainCharField);
+		charGroup.getChildren().add(mainCharField);
 		
 		Animation animation = new SpriteAnimation(
 				mainCharField, Duration.millis(400),
@@ -71,15 +75,14 @@ public class Character
 		);
 		animation.setCycleCount(Animation.INDEFINITE);
 		animation.play();
-	
 	}
-//	
-//	public void loadPunch() {
-//		mainCharField.setImage(PUNCH);
-//		mainCharField.setLayoutX(100);
-//		mainCharField.setLayoutY(-2);
-//		g.getChildren().add(mainCharField);
-//	}
+	
+	public void loadPunch(Group charGroup) {
+		mainCharField.setImage(PUNCH);
+		mainCharField.setLayoutX(100);
+		mainCharField.setLayoutY(-2);
+		charGroup.getChildren().add(mainCharField);
+	}
 	
 	public void jump()
 	{
