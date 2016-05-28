@@ -37,4 +37,10 @@ public class Enemy extends RectangleComponent
 	{
 		enemiesArray.clear();
 	}
+
+	public void delete()
+	{
+		enemiesArray.remove(this);
+		
+	}
 }

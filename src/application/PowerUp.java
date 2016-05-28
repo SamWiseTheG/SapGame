@@ -61,7 +61,6 @@ public class PowerUp
 	// remove from the array list
 	public void delete() 
 	{
-		powerUpGroup.getChildren().remove( component );
 		powerUpArray.remove(this);
 	}
 	

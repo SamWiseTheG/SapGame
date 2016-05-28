@@ -1,12 +1,5 @@
 package application;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Optional;
-import java.util.Random;
-
-
-
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.SequentialTransition;
@@ -39,8 +32,6 @@ public abstract class GameLoop
 	Image rF;
 	Character mainChar;
 	//Menu m;
-	Random r= new Random();
-
 
 	boolean falling=true;
 	boolean cheatMode=false;
@@ -76,6 +67,7 @@ public abstract class GameLoop
 		stage=primaryStage;
 		root = new Group();
 		componentsGroup = new Group();
+
 		initBackground();
 		initStage();
 		root.getChildren().add(componentsGroup);
@@ -89,47 +81,47 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
-				if(hud.healthCount.size()>0)
-				{
-					gravity();
-					//moveChar();
-					checkForPlatformCollisions();
-					checkForWallCollisions();
-					checkbottomCollision();
-					generatePlatform();
-					//deletePlatform();
-					checkPowerUpCollision();
-					checkEnemieCollision();
-					score=System.currentTimeMillis()-startTime;
-					scene.setOnKeyPressed(k -> actPress(k));
-					scene.setOnKeyReleased(k -> actRelease(k));
-					//System.out.println(hud.healthCount.size());
-				}
-				else 
-				{
-					this.stop();
-				}
-
+				//				if(hud.healthCount.size()>0)
+				//				{
+				gravity();
+				//moveChar();
+				checkForPlatformCollisions();
+				checkForWallCollisions();
+				checkbottomCollision();
+				generateObjects();
+				deleteObjects();
+				checkPowerUpCollision();
+				checkEnemieCollision();
+				score=System.currentTimeMillis()-startTime;
+				scene.setOnKeyPressed(k -> actPress(k));
+				scene.setOnKeyReleased(k -> actRelease(k));
+				//System.out.println(hud.healthCount.size());
+				//				}
+				//				else 
+				//				{
+				//					this.stop();
+				//				}
+				//}
 			}
 		}.start();
-			//System.out.println("here");
-			//score=System.currentTimeMillis()-startTime;
-			TextInputDialog dialog = new TextInputDialog();
-			dialog.setTitle("Score");
-			dialog.setHeaderText("Score");
-			dialog.setContentText("Please enter your name:");
-			Optional<String> result = dialog.showAndWait();
-			try 
-			{
-				File highScores = new File("src/resources/highScores.txt");
-				PrintWriter pr = new PrintWriter(highScores);
-				pr.println("High score: " + result.get()+ " - " + (int)score);
-				pr.close();
-			}
-			catch(Exception e)
-			{
-				System.out.println("FILE ERROR");
-			}
+		//System.out.println("here");
+		//score=System.currentTimeMillis()-startTime;
+		//		TextInputDialog dialog = new TextInputDialog();
+		//		dialog.setTitle("Score");
+		//		dialog.setHeaderText("Score");
+		//		dialog.setContentText("Please enter your name:");
+		//		Optional<String> result = dialog.showAndWait();
+		//		try 
+		//		{
+		//			File highScores = new File("src/resources/highScores.txt");
+		//			PrintWriter pr = new PrintWriter(highScores);
+		//			pr.println("High score: " + result.get()+ " - " + (int)score);
+		//			pr.close();
+		//		}
+		//		catch(Exception e)
+		//		{
+		//			System.out.println("FILE ERROR");
+		//		}
 	}
 
 	public void stop(KeyEvent k, Rectangle r)
@@ -222,7 +214,7 @@ public abstract class GameLoop
 				else
 				{
 					//mainChar.mainCharField.setFill(Color.BLUE);
-					movementSpeed=2;
+					movementSpeed=30;
 					cheatMode=true;
 				}
 				break;
@@ -432,7 +424,7 @@ public abstract class GameLoop
 	}
 	public void checkEnemieCollision()
 	{
-		Enemy e = getClosestEnemie();
+		Enemy e = getClosestEnemy();
 		if (mainChar.mainCharField.getBoundsInParent().intersects(e.getBounds()))
 		{
 			if(!gotHurt)
@@ -465,7 +457,7 @@ public abstract class GameLoop
 		return closestPowerUp;
 	}
 
-	public Enemy getClosestEnemie()
+	public Enemy getClosestEnemy()
 	{
 		Enemy closestEnemy = Enemy.enemiesArray.get(0);
 
@@ -489,9 +481,9 @@ public abstract class GameLoop
 
 	public void checkbottomCollision()
 	{
-		double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
+		double charMinY = mainChar.mainCharField.getBoundsInParent().getMinY();
 
-		if(charMaxY>=600)
+		if(charMinY>=600)
 		{
 			hud.removeHealth();
 			mainChar.setStateAlive(false);
@@ -510,7 +502,7 @@ public abstract class GameLoop
 		tt.setAutoReverse(true);
 		tt.play();
 	}
-	private synchronized void generatePlatform()
+	private void generateObjects()
 	{
 		double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
 		double charMinY = mainChar.mainCharField.getBoundsInParent().getMaxY();
@@ -519,10 +511,11 @@ public abstract class GameLoop
 
 		//Min + (int)(Math.random() * ((Max - Min) + 1))
 		//int x=(400+(int)(charMaxX+ (Math.random() * ((400)) + 1)));
-		int x= (int)(Math.random()*350)+(int)charMaxX;
-		int y= (int)(Math.random()*600)+(int)charMaxY;
+		int x= (int)(Math.random()*256)+768;
+		int y= (int)(Math.random()*400)+100;
 
 		int width=50+(int)(Math.random()*(350+1));
+		int wallHeight =150;
 
 		//System.out.println("x: " + x);
 		//System.out.println("y: " + y);
@@ -531,32 +524,83 @@ public abstract class GameLoop
 		if(Platform.getPlatformsArrayList().size()<=5)
 		{
 			Platform p = new Platform(componentsGroup, x, y,width);
-			Duration speed=Duration.millis(5000);
-			TranslateTransition tt  = new TranslateTransition(speed, p.component);
-			tt.setFromX(x);
-			tt.setToX(-500);
-			//tt.setCycleCount(2);
-			//tt.setAutoReverse(true);
+			PowerUp pow = new PowerUp(componentsGroup, (x+100), (y-15), 1);
+			Wall w = new Wall(componentsGroup, x, y-wallHeight, 20, wallHeight);
+			Enemy e = new Enemy(componentsGroup, x, y-30);
 
-			tt.play();
-			tt.setOnFinished(new EventHandler<ActionEvent>(){
-				public void handle(ActionEvent arg0) 
-				{
-					deletePlatform();
-				}
-			});
+
+			Duration speed=Duration.millis(10000);
+			TranslateTransition platTranslate  = new TranslateTransition(speed, p.component);
+			TranslateTransition powTranslate  = new TranslateTransition(speed, pow.component);
+			TranslateTransition wTranslate = new TranslateTransition(speed, w.component);
+			TranslateTransition eTranslate = new TranslateTransition(speed, e.component);
+
+			platTranslate.setFromX(x);
+			platTranslate.setToX(-1000);
+			platTranslate.play();
+
+			powTranslate.setFromX(x+100);
+			powTranslate.setToX(-1000);
+			powTranslate.play();
+
+			wTranslate.setFromX(x+(width*.75));
+			wTranslate.setToX(-1000);
+			wTranslate.play();
+
+			eTranslate.setFromX(x-250);
+			eTranslate.setToX(-1000);
+			eTranslate.play();
 			//System.out.println("Array size: " + Platform.getPlatformsArrayList().size());
 		}
 	}
-	private void deletePlatform()
+
+	private void deleteObjects()
 	{
-		for(Platform p : Platform.getPlatformsArrayList())
-		{
-			if(p.getMaxX()<0)
+		try {
+			if(Platform.getPlatformsArrayList().size()>0)
 			{
-				System.out.println("delete platform");
-				p.delete();
+				for(Platform p : Platform.getPlatformsArrayList())
+				{
+					if(p.getMaxX()<0)
+					{
+						p.delete();
+					}
+				}
 			}
+			if(PowerUp.getPowerUpArrayList().size()>0)
+			{
+				for(PowerUp pow : PowerUp.getPowerUpArrayList())
+				{
+					if(pow.getBounds().getMaxX()<0)
+					{
+						pow.delete();
+					}
+				}
+			}
+			if(Enemy.getEnemiesArrayList().size()>0)
+			{
+				for(Enemy e : Enemy.getEnemiesArrayList())
+				{
+					if(e.getMaxX()<0)
+					{
+						e.delete();
+					}
+				}
+			}
+			if(Wall.getWall().size()>0)
+			{
+				for(Wall w : Wall.getWall())
+				{
+					if(w.getMaxX()<0)
+					{
+						w.breakWall(w);
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+
 		}
 	}
 
