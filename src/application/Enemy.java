@@ -13,6 +13,7 @@ public class Enemy extends RectangleComponent
 	protected static ArrayList<Enemy> enemiesArray = new ArrayList<Enemy>();
 	//protected RectangleComponent component;
 	protected Color enemyColor;
+	Group componentGrp;
 	
 	public Enemy(Group componentsGroup, double xCoord, double yCoord) 
 	{	
@@ -42,6 +43,7 @@ public class Enemy extends RectangleComponent
 
 	public void delete()
 	{
+		componentGrp.getChildren().remove(component);
 		enemiesArray.remove(this);
 		
 	}

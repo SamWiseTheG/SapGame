@@ -12,19 +12,22 @@ import javafx.util.Duration;
 public class Platform extends RectangleComponent
 {
 	protected static ArrayList<Platform> platformsArray = new ArrayList<Platform>();
+	Group componentsGrp;
 	//Rectangle component;
 	
 	public Platform(Group componentsGroup, double x, double y, double width, double height, Color color) 
 	{
 		this(componentsGroup, x, y, width);
+		componentsGrp=componentsGroup;
 		component.setHeight(height);
 		component.setFill(color);
 		platformsArray.add(0, this);
 	}
-	
+
 	public Platform(Group componentsGroup, double x, double y, double width) 
 	{
 		//Set up component
+		componentsGrp=componentsGroup;
 		component = new Rectangle();
 		component.setWidth(width);
 		component.setHeight(20);
@@ -46,7 +49,8 @@ public class Platform extends RectangleComponent
 	
 	public void delete() 
 	{
-		platformsArray.remove(this);
+		componentsGrp.getChildren().remove(component);
+		platformsArray.remove(this);	
 	}
 	
 	public static void reset() 

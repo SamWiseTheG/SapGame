@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
@@ -61,6 +62,7 @@ public class PowerUp
 	// remove from the array list
 	public void delete() 
 	{
+		powerUpGroup.getChildren().remove(component);
 		powerUpArray.remove(this);
 	}
 	

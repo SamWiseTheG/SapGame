@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.Component;
+
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.SequentialTransition;
@@ -97,9 +99,8 @@ public abstract class GameLoop
 				score=System.currentTimeMillis()-startTime;
 				scene.setOnKeyPressed(k -> actPress(k));
 				scene.setOnKeyReleased(k -> actRelease(k));
-				if((System.currentTimeMillis()-startTime>10000) && removePlatform)
+				if((System.currentTimeMillis()-startTime>5000) && removePlatform)
 				{
-					System.out.println("butts");
 					Platform p = Platform.getPlatformsArrayList().get(Platform.getPlatformsArrayList().size()-1);
 					p.delete();
 					removePlatform=false;
