@@ -55,6 +55,7 @@ public class World extends GameLoop
 		new Platform(componentsGroup,100, 100, 100);
 		new Wall(componentsGroup,2000, 2000, 1, 1);
 		new PowerUp(componentsGroup, 2000, 2000,1);
+		new Enemy(componentsGroup, 2000, 2000);
 
 		//powerup
 		//new PowerUp(componentsGroup, 225, 175,1);

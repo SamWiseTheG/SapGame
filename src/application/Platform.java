@@ -43,10 +43,12 @@ public class Platform extends RectangleComponent
 	{
 		return platformsArray;
 	}
+	
 	public void delete() 
 	{
 		platformsArray.remove(this);
 	}
+	
 	public static void reset() 
 	{
 		platformsArray.clear();
