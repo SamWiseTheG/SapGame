@@ -14,12 +14,14 @@ public class Enemy extends RectangleComponent
 	//protected RectangleComponent component;
 	protected Color enemyColor;
 	
-	public Enemy(Group enemyGroup, double xCoord, double yCoord) 
+	public Enemy(Group componentsGroup, double xCoord, double yCoord) 
 	{	
-		component = new Rectangle(xCoord, yCoord, 35, 35);
+		component = new Rectangle(0, yCoord,35,35);
+		component.setWidth(35);
+		component.setHeight(35);
 		component.setFill(Color.CADETBLUE);
 		//component = new Rectangle(xCoord, yCoord, 10, Color.CADETBLUE);
-		enemyGroup.getChildren().add(component);
+		componentsGroup.getChildren().add(component);
 		enemiesArray.add(0, this);
 	}
 	

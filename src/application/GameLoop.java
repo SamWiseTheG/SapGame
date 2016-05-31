@@ -32,7 +32,7 @@ public abstract class GameLoop
 	Image rF;
 	Character mainChar;
 	//Menu m;
-
+	//
 	boolean falling=true;
 	boolean cheatMode=false;
 	boolean gotHealth=false;
@@ -336,7 +336,7 @@ public abstract class GameLoop
 			if( (Math.abs(p.getMinY()-charMaxY) )<=(Math.abs(closestPlat.getMinY()-charMaxY))  )
 			{
 				closestPlat=p;
-				closestPlat.component.setFill(Color.BLUE);
+				//closestPlat.component.setFill(Color.BLUE);
 			}
 		}
 		return closestPlat;
@@ -401,7 +401,7 @@ public abstract class GameLoop
 				hud.showPowerUp(3);
 
 			}
-			if(p.getType()==1)
+			if(p.getType()==1 && !hasJump)
 			{
 				jumpHeight=150;
 				jumpTimer=System.currentTimeMillis();
@@ -415,6 +415,7 @@ public abstract class GameLoop
 		{
 			jumpHeight=75;
 			hud.removePowerUp(1);
+			hasJump=false;
 		}
 		if(System.currentTimeMillis()-invincibleTimer>=5000 && hasInvincible)//5 seconds
 		{
@@ -504,32 +505,36 @@ public abstract class GameLoop
 	}
 	private void generateObjects()
 	{
-		double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
-		double charMinY = mainChar.mainCharField.getBoundsInParent().getMaxY();
-		double charMinX = mainChar.mainCharField.getBoundsInParent().getMinX();
-		double charMaxX = mainChar.mainCharField.getBoundsInParent().getMaxX();
+		//double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
+		//double charMinY = mainChar.mainCharField.getBoundsInParent().getMaxY();
+		//double charMinX = mainChar.mainCharField.getBoundsInParent().getMinX();
+		//double charMaxX = mainChar.mainCharField.getBoundsInParent().getMaxX();
 
 		//Min + (int)(Math.random() * ((Max - Min) + 1))
 		//int x=(400+(int)(charMaxX+ (Math.random() * ((400)) + 1)));
+		
 		int x= (int)(Math.random()*256)+768;
 		int y= (int)(Math.random()*400)+100;
 
-		int width=50+(int)(Math.random()*(350+1));
-		int wallHeight =150;
-
+		int platformWidth=50+(int)(Math.random()*(350+1));
+		int wallHeight = 150;
+		int powType = (int)(Math.random()*3)+1;
+		
+		//System.out.println(powType);
 		//System.out.println("x: " + x);
 		//System.out.println("y: " + y);
 		//System.out.println("width: " + width);
 
 		if(Platform.getPlatformsArrayList().size()<=5)
 		{
-			Platform p = new Platform(componentsGroup, x, y,width);
-			PowerUp pow = new PowerUp(componentsGroup, (x+100), (y-15), 1);
+			Platform p = new Platform(componentsGroup, x, y,platformWidth);
+			PowerUp pow = new PowerUp(componentsGroup, x, (y-15), powType);
 			Wall w = new Wall(componentsGroup, x, y-wallHeight, 20, wallHeight);
-			Enemy e = new Enemy(componentsGroup, x, y-30);
+			Enemy e = new Enemy(componentsGroup, x , (y-35));
 
 
 			Duration speed=Duration.millis(10000);
+
 			TranslateTransition platTranslate  = new TranslateTransition(speed, p.component);
 			TranslateTransition powTranslate  = new TranslateTransition(speed, pow.component);
 			TranslateTransition wTranslate = new TranslateTransition(speed, w.component);
@@ -543,31 +548,34 @@ public abstract class GameLoop
 			powTranslate.setToX(-1000);
 			powTranslate.play();
 
-			wTranslate.setFromX(x+(width*.75));
+			wTranslate.setFromX(x+(platformWidth*.75));
 			wTranslate.setToX(-1000);
 			wTranslate.play();
 
-			eTranslate.setFromX(x-250);
+			eTranslate.setFromX(x);
 			eTranslate.setToX(-1000);
 			eTranslate.play();
+
+
 			//System.out.println("Array size: " + Platform.getPlatformsArrayList().size());
 		}
 	}
 
 	private void deleteObjects()
 	{
-		try {
+		try 
+		{
 			if(Platform.getPlatformsArrayList().size()>0)
 			{
 				for(Platform p : Platform.getPlatformsArrayList())
 				{
-					if(p.getMaxX()<0)
+					if(p.getMaxX()<-5)
 					{
 						p.delete();
 					}
 				}
 			}
-			if(PowerUp.getPowerUpArrayList().size()>0)
+			if(PowerUp.getPowerUpArrayList().size()>-5)
 			{
 				for(PowerUp pow : PowerUp.getPowerUpArrayList())
 				{
@@ -577,23 +585,23 @@ public abstract class GameLoop
 					}
 				}
 			}
-			if(Enemy.getEnemiesArrayList().size()>0)
-			{
-				for(Enemy e : Enemy.getEnemiesArrayList())
-				{
-					if(e.getMaxX()<0)
-					{
-						e.delete();
-					}
-				}
-			}
-			if(Wall.getWall().size()>0)
+			if(Wall.getWall().size()>-5)
 			{
 				for(Wall w : Wall.getWall())
 				{
 					if(w.getMaxX()<0)
 					{
 						w.breakWall(w);
+					}
+				}
+			}
+			if(Enemy.getEnemiesArrayList().size()>-5)
+			{
+				for(Enemy e : Enemy.getEnemiesArrayList())
+				{
+					if(e.getMaxX()<0)
+					{
+						e.delete();
 					}
 				}
 			}
