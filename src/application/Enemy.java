@@ -20,7 +20,7 @@ public class Enemy extends RectangleComponent
 		component = new Rectangle(0, yCoord,35,35);
 		component.setWidth(35);
 		component.setHeight(35);
-		component.setFill(Color.CADETBLUE);
+		component.setFill(Color.DARKORANGE);
 		//component = new Rectangle(xCoord, yCoord, 10, Color.CADETBLUE);
 		componentsGroup.getChildren().add(component);
 		enemiesArray.add(0, this);

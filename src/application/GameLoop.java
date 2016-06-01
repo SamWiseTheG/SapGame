@@ -9,6 +9,7 @@ import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -45,16 +46,20 @@ public abstract class GameLoop
 	boolean aPressed=false;
 	boolean checkDeath=false;
 	boolean removePlatform=true;
+	boolean firstPlatform=true;
+	boolean morePlatforms=false;
 
-	int jumpHeight=100;
+	int gameSpeed = 7500;
+	int jumpHeight=150;
 	int movementSpeed=20;
-	int i = 40;
+	int spawnLogic = 59;
 
 	double jumpTimer;
 	double invincibleTimer;
-	double startTime=System.currentTimeMillis();
+	double startTime=(double)System.currentTimeMillis()/1000;
 
 	double score=0;
+	int currentScore = 0;
 	boolean hasJump=false;
 	boolean hasInvincible=false;
 
@@ -85,8 +90,8 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
-				//				if(hud.healthCount.size()>0)
-				//				{
+//				if(hud.healthCount.size()>0)
+//				{
 				gravity();
 				//moveChar();
 				checkForPlatformCollisions();
@@ -96,10 +101,13 @@ public abstract class GameLoop
 				deleteObjects();
 				checkPowerUpCollision();
 				checkEnemieCollision();
-				score=System.currentTimeMillis()-startTime;
+				score=(((double)System.currentTimeMillis()/1000)-startTime);
+				hud.setScore(Double.toString((double) Math.round((score / score * 100) * 10) / 10));
+				System.out.printf("%.1f\n", score);
+				
 				scene.setOnKeyPressed(k -> actPress(k));
 				scene.setOnKeyReleased(k -> actRelease(k));
-				if((System.currentTimeMillis()-startTime>5000) && removePlatform)
+				if((System.currentTimeMillis()-startTime*1000>5000) && removePlatform)
 				{
 					Platform p = Platform.getPlatformsArrayList().get(Platform.getPlatformsArrayList().size()-1);
 					p.delete();
@@ -125,7 +133,7 @@ public abstract class GameLoop
 		//		{
 		//			File highScores = new File("src/resources/highScores.txt");
 		//			PrintWriter pr = new PrintWriter(highScores);
-		//			pr.println("High score: " + result.get()+ " - " + (int)score);
+		//			pr.println("High score: " + result.get()+ " - " + (int)score%1000);
 		//			pr.close();
 		//		}
 		//		catch(Exception e)
@@ -144,126 +152,126 @@ public abstract class GameLoop
 	{
 		switch (k.getCode())
 		{
-		case D:
-			dPressed=false;
-			break;
-		case A:
-			aPressed=false;
-			break;
-		default:
-			break;
+			case D:
+				dPressed=false;
+				break;
+			case A:
+				aPressed=false;
+				break;
+			default:
+				break;
 		}
 	}
 	public void actPress(KeyEvent k)
 	{
 		switch(k.getCode())				
 		{
-		case SPACE:
-			if(!spacePressed && mainChar.getStateCanJump())
-			{
-				jumping=true;
-				TranslateTransition t1 = new TranslateTransition(Duration.millis(300),mainChar.mainCharField);
-				t1.setByY(-jumpHeight);
+			case SPACE:
+				if(!spacePressed && mainChar.getStateCanJump())
+				{
+					jumping=true;
+					TranslateTransition t1 = new TranslateTransition(Duration.millis(300),mainChar.mainCharField);
+					t1.setByY(-jumpHeight);
 
-				TranslateTransition t2 = new TranslateTransition(Duration.millis(100),mainChar.mainCharField);
-				t2.setByY(0);
+					TranslateTransition t2 = new TranslateTransition(Duration.millis(100),mainChar.mainCharField);
+					t2.setByY(0);
 
-				SequentialTransition st = new SequentialTransition();
-				TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
+					SequentialTransition st = new SequentialTransition();
+					TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
 
-				moveChar.setByX(movementSpeed*2);
-				st.getChildren().addAll(t1,t2);
-				//					if(dPressed)
-				//					{
-				//						moveChar.play();
-				//						st.play();
-				//						st.setOnFinished(new EventHandler<ActionEvent>(){
-				//							public void handle(ActionEvent arg0) 
-				//							{
-				//								falling=true;
-				//								jumping=false;
-				//								spacePressed=true;
-				//							}
-				//						});
-				//					}
-				//					else
-				//					{
-				st.play();
-				st.setOnFinished(new EventHandler<ActionEvent>(){
-					public void handle(ActionEvent arg0) 
-					{
-						falling=true;
-						jumping=false;
-						spacePressed=true;
-					}
-				});	
-				//}
-			}
+					moveChar.setByX(movementSpeed*2);
+					st.getChildren().addAll(t1,t2);
+					//					if(dPressed)
+					//					{
+					//						moveChar.play();
+					//						st.play();
+					//						st.setOnFinished(new EventHandler<ActionEvent>(){
+					//							public void handle(ActionEvent arg0) 
+					//							{
+					//								falling=true;
+					//								jumping=false;
+					//								spacePressed=true;
+					//							}
+					//						});
+					//					}
+					//					else
+					//					{
+					st.play();
+					st.setOnFinished(new EventHandler<ActionEvent>(){
+						public void handle(ActionEvent arg0) 
+						{
+							falling=true;
+							jumping=false;
+							spacePressed=true;
+						}
+					});	
+					//}
+				}
 
-			break;
+				break;
 
-			//punch
-		case C:
-			if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 20)
-			{
-				//					mainChar.loadPunch();
-				mainChar.punch(getClosestWall());
-			}
-			break;
+				//punch
+			case C:
+				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 30 )
+				{
+					//					mainChar.loadPunch();
+					mainChar.punch(getClosestWall());
+				}
+				break;
 
-			//----------------START DEVELOPMENT TOOLS-----------------
+				//----------------START DEVELOPMENT TOOLS-----------------
 
-			//turn gravity on/off
-		case G:
-			if(cheatMode)
-			{
-				//mainChar.mainCharField.setFill(Color.GREEN);
-				movementSpeed=30;
-				cheatMode=false;
-			}
-			else
-			{
-				//mainChar.mainCharField.setFill(Color.BLUE);
-				movementSpeed=30;
-				cheatMode=true;
-			}
-			break;
-			//movement keys
-		case D:
-			dPressed=true;
-			TranslateTransition ttt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-			ttt.setByX(movementSpeed);
-			ttt.play();
-			break;
+				//turn gravity on/off
+			case G:
+				if(cheatMode)
+				{
+					//mainChar.mainCharField.setFill(Color.GREEN);
+					movementSpeed=30;
+					cheatMode=false;
+				}
+				else
+				{
+					//mainChar.mainCharField.setFill(Color.BLUE);
+					movementSpeed=30;
+					cheatMode=true;
+				}
+				break;
+				//movement keys
+			case D:
+				dPressed=true;
+				TranslateTransition ttt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
+				ttt.setByX(movementSpeed);
+				ttt.play();
+				break;
 
-		case A:
-			aPressed=true;
-			TranslateTransition tttt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-			tttt.setByX(-movementSpeed);
-			tttt.play();
-			break;
+			case A:
+				aPressed=true;
+				TranslateTransition tttt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
+				tttt.setByX(-movementSpeed);
+				tttt.play();
+				break;
 
-		case W:
-			if (mainChar.getStateCanJump())
-			{
-				//spacePressed=true;
-				TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-				ttUp.setByY(-100);
-				ttUp.play();
-			}
-			break;
+			case W:
+				if (mainChar.getStateCanJump())
+				{
+					//spacePressed=true;
+					TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
+					ttUp.setByY(-100);
+					ttUp.play();
+				}
+				break;
 
-		case S:
-			if(!mainChar.isStateOnPlatform())
-			{
-				TranslateTransition ttDown = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-				ttDown.setByY(movementSpeed);
-				ttDown.play();
-			}
+			case S:
+				if(!mainChar.isStateOnPlatform())
+				{
+					TranslateTransition ttDown = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
+					ttDown.setByY(movementSpeed);
+					ttDown.play();
+				}
 
-		default:
-			break;
-			//---------------------END DEVELOPMENT TOOLS------------------------------------------------
+			default:
+				break;
+				//---------------------END DEVELOPMENT TOOLS------------------------------------------------
 		}				
 	}
 
@@ -275,9 +283,6 @@ public abstract class GameLoop
 	public void gravity()
 	{
 		TranslateTransition tt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-
-		//ptGravity = new ParallelTransition();
-		//ptGravity.getChildren().addAll(tt,tPlatform);
 		tt.setByY(5);
 
 		if(!jumping)
@@ -309,7 +314,7 @@ public abstract class GameLoop
 
 		//closestPlat.component.setFill(Color.ORANGE);
 
-		if ( (charMaxY>=(closestPlat.getMinY()-10)) && ( charMaxY<=(closestPlat.getMinY()+10) ) 
+		if ( (charMaxY>=(closestPlat.getMinY()-5)) && ( charMaxY<=(closestPlat.getMinY()+10) ) 
 				&& ( charMinX+20 <= closestPlat.getMaxX()) 
 				&& (charMaxX-12 >= closestPlat.getMinX()) )
 		{
@@ -403,27 +408,33 @@ public abstract class GameLoop
 
 		if (mainChar.mainCharField.getBoundsInParent().intersects(p.getBounds()))
 		{
-			if(p.getType()==3)
-			{
-				hud.addHealth();
-				invincibleTimer=System.currentTimeMillis();
-				hasInvincible=true;
-				hud.showPowerUp(3);
-
-			}
 			if(p.getType()==1 && !hasJump)
 			{
-				jumpHeight=150;
+				jumpHeight=200;
 				jumpTimer=System.currentTimeMillis();
 				hud.showPowerUp(1);
 				hasJump=true;
+			}
+			if(p.getType()==2)
+			{
+				score += 10;
+				hud.showPowerUp(2);
+
+			}
+			if(p.getType()==3)
+			{
+				hud.addHealth();
+				//invincibleTimer=System.currentTimeMillis();
+				//hasInvincible=true;
+				//hud.showPowerUp(3);
+
 			}
 			p.delete();
 
 		}
 		if(System.currentTimeMillis()-jumpTimer>=10000 && hasJump)//10 seconds
 		{
-			jumpHeight=75;
+			jumpHeight=150;
 			hud.removePowerUp(1);
 			hasJump=false;
 		}
@@ -443,6 +454,10 @@ public abstract class GameLoop
 				hud.removeHealth();
 				gotHurt=true;
 			}		
+		}
+		if (!(mainChar.mainCharField.getBoundsInParent().intersects(e.getBounds())))
+		{
+				gotHurt=false;	
 		}
 	}
 
@@ -504,7 +519,7 @@ public abstract class GameLoop
 	private void movePlatform()
 	{
 		Platform p = Platform.platformsArray.get(0);
-		Duration speed=Duration.millis(5000);
+		Duration speed=Duration.millis(gameSpeed);
 		TranslateTransition tt = new TranslateTransition(speed, p.component);
 
 		tt.setFromX(500);
@@ -523,85 +538,185 @@ public abstract class GameLoop
 		//Min + (int)(Math.random() * ((Max - Min) + 1))
 		//int x=(400+(int)(charMaxX+ (Math.random() * ((400)) + 1)));
 
-		int x= (int)(Math.random()*256)+768;
+		int x= (int)(Math.random()*256)+1024;
 		int y= (int)(Math.random()*400)+100;
 
-		int platformWidth=200+(int)(Math.random()*(250+1));
+		int platformWidth=150+(int)(Math.random()*(200));
 		int wallHeight = 150;
-		int powType = (int)(Math.random()*3)+1;
+		int randBinary = (int)(Math.random()*2);
 
+		//System.out.println(randBinary);
+		//int powType = (int)(Math.random()*3)+1;
 		//System.out.println(powType);
 		//System.out.println("x: " + x);
 		//System.out.println("y: " + y);
 		//System.out.println("width: " + width);
 
 
-		i++;
+		spawnLogic++;
 		//System.out.println( i );
 
-		if( i % 40 == 0)
+		if( spawnLogic % 60 == 0)
 		{
-			Platform p = new Platform(componentsGroup, x, y,platformWidth);
+
 			//PowerUp pow = new PowerUp(componentsGroup, x, (y-15), powType);
 			//Wall w = new Wall(componentsGroup, x, y-wallHeight, 20, wallHeight);
 			//Enemy e = new Enemy(componentsGroup, x , (y-35));
+
 			int object=1+(int)(Math.random()*(8));
-			System.out.println(object);
-			PowerUp pow1,pow2,pow3;
+
+			boolean moveUp=false;
+
+			//System.out.println(object);
+			PowerUp pow;
 			Wall w;
 			Enemy e;
-			Duration speed=Duration.millis(5000);
+			Duration speed=Duration.millis(gameSpeed);
 
+			Platform p;
 
-			switch( object )
+			if(firstPlatform)
 			{
-			case 1:
-				pow1 = new PowerUp(componentsGroup, x, (y-15), 1);
-				TranslateTransition pow1Translate  = new TranslateTransition(speed, pow1.component);
-				pow1Translate.setFromX(x+(platformWidth*.75));
-				pow1Translate.setToX(-1000+(platformWidth*.75));
-				pow1Translate.play();
-				break;
-			case 2:
-				pow2 = new PowerUp(componentsGroup, x, (y-15), 2);
-				TranslateTransition pow2Translate  = new TranslateTransition(speed, pow2.component);
-				pow2Translate.setFromX(x+(platformWidth*.75));
-				pow2Translate.setToX(-1000+(platformWidth*.75));
-				pow2Translate.play();
-				break;
-			case 3: 
-				pow3 = new PowerUp(componentsGroup, x, (y-15), 3);
-				TranslateTransition pow3Translate  = new TranslateTransition(speed, pow3.component);
-				pow3Translate.setFromX(x+(platformWidth*.75));
-				pow3Translate.setToX(-1000+(platformWidth*.75));
-				pow3Translate.play();
-				break;
-			case 4:
-				w = new Wall(componentsGroup, x, y-wallHeight, 20, wallHeight);
-				TranslateTransition wTranslate = new TranslateTransition(speed, w.component);
-				wTranslate.setFromX(x+(platformWidth*.75));
-				wTranslate.setToX(-1000+(platformWidth*.75)); // 925 and 950
-				wTranslate.play();
-				break;
-			case 5:
-				e = new Enemy(componentsGroup, x , (y-35));
-				TranslateTransition eTranslate = new TranslateTransition(speed, e.component);
-				eTranslate.setFromX(x+(platformWidth*.75));
-				eTranslate.setToX(-1000+(platformWidth*.75));
-				eTranslate.play();
-				break;
-			default:
-				break;
-
+				p = new Platform(componentsGroup, x, y,platformWidth);
+				translatePlatform(speed, p, x);
+				firstPlatform=false;
 			}
 
-			TranslateTransition platTranslate  = new TranslateTransition(speed, p.component);
+			int platformTop = (int)(Platform.getPlatformsArrayList().get(0).getMaxY());
+			//System.out.println(platformTop);
 
-			platTranslate.setFromX(x);
-			platTranslate.setToX(-1000);
-			platTranslate.play();
+			if(morePlatforms)
+			{
+				if(randBinary==1)
+				{
+					if(platformTop<=200)
+					{
+						p = new Platform(componentsGroup, x, platformTop+150, platformWidth);
+						translatePlatform(speed, p, x);
+						moveUp=true;
+					}
+					else 
+					{
+						p = new Platform(componentsGroup, x, platformTop-150, platformWidth);
+						translatePlatform(speed, p, x);
+						moveUp=false;
+					}
+				}
+				else
+				{
+					if(platformTop>=400)
+					{
+						p = new Platform(componentsGroup, x, platformTop-150, platformWidth);
+						translatePlatform(speed, p, x);
+						moveUp=false;
+					}
+					else 
+					{
+						p = new Platform(componentsGroup, x, platformTop+150, platformWidth);
+						translatePlatform(speed, p, x);
+						moveUp=true;
+					}			
+				}				
+				switch( object )
+				{
+					case 1:
+						if(moveUp)
+						{
+							pow = new PowerUp(componentsGroup, x, platformTop+150-15, 1);
+							translatePowerUp(speed, pow, x, platformWidth);
+						}
+						else 
+						{
+							pow = new PowerUp(componentsGroup, x, platformTop-150-15, 1);
+							translatePowerUp(speed, pow, x, platformWidth);
+						}
+						break;
+					case 2:
+						if(moveUp)
+						{
+							pow = new PowerUp(componentsGroup, x, platformTop+150-15, 2);
+							translatePowerUp(speed, pow, x, platformWidth);
+						}
+						else 
+						{
+							pow = new PowerUp(componentsGroup, x, platformTop-150-15, 2);
+							translatePowerUp(speed, pow, x, platformWidth);
+						}
+						break;
+					case 3: 
+						if(moveUp)
+						{
+							pow = new PowerUp(componentsGroup, x, platformTop+150-15, 3);
+							translatePowerUp(speed, pow, x, platformWidth);
+						}
+						else 
+						{
+							pow = new PowerUp(componentsGroup, x, platformTop-150-15, 3);
+							translatePowerUp(speed, pow, x, platformWidth);
+						}
+						break;
+					case 4:
+						if(moveUp)
+						{
+							w = new Wall(componentsGroup, x, platformTop+150-wallHeight, 20, wallHeight);
+							translateWall(speed, w, x, platformWidth);
+						}
+						else 
+						{
+							w = new Wall(componentsGroup, x, platformTop-150-wallHeight, 20, wallHeight);
+							translateWall(speed, w, x, platformWidth);
+						}
+						break;
+					case 5:
+						if(moveUp)
+						{
+							e = new Enemy(componentsGroup, x , platformTop+150-35);
+							translateEnemy( speed, e, x, platformWidth);
+						}
+						else 
+						{
+							e = new Enemy(componentsGroup, x , platformTop-150-35);
+							translateEnemy( speed, e, x, platformWidth);
+						}
+						break;
+					default:
+						break;
+
+				}
+			}
+			morePlatforms=true;
+
 			//System.out.println("Array size: " + Platform.getPlatformsArrayList().size());
 		}
+	}
+
+	public void translatePlatform(Duration speed, Platform p, int x)
+	{
+		TranslateTransition platTranslate  = new TranslateTransition(speed, p.component);
+		platTranslate.setFromX(x);
+		platTranslate.setToX(-1000);
+		platTranslate.play();
+	}
+	public void translatePowerUp(Duration speed, PowerUp pow, int x,int platformWidth)
+	{
+		TranslateTransition powTranslate  = new TranslateTransition(speed, pow.component);
+		powTranslate.setFromX(x+(platformWidth*.75));
+		powTranslate.setToX(-1000+(platformWidth*.75));
+		powTranslate.play();
+	}
+	public void translateWall(Duration speed, Wall w, int x,int platformWidth)
+	{
+		TranslateTransition wTranslate = new TranslateTransition(speed, w.component);
+		wTranslate.setFromX(x+(platformWidth*.75));
+		wTranslate.setToX(-1000+(platformWidth*.75)); // 925 and 950
+		wTranslate.play();
+	}
+	public void translateEnemy(Duration speed, Enemy e, int x, int platformWidth)
+	{
+		TranslateTransition eTranslate = new TranslateTransition(speed, e.component);
+		eTranslate.setFromX(x+(platformWidth*.75));
+		eTranslate.setToX(-1000+(platformWidth*.75));
+		eTranslate.play();
 	}
 
 	private void deleteObjects()

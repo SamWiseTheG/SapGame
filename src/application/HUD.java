@@ -5,6 +5,9 @@ import javafx.scene.Group;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 public class HUD 
 {
@@ -16,8 +19,11 @@ public class HUD
 	int x = 13;
 	int y = 11;
 	ImageView livesView;
+	String score="0";
 	Circle cJump = new Circle(10);
 	Circle cInvincible = new Circle(10);
+	Text highScoreText = new Text(20, 20, score);
+
 	
 
 
@@ -49,6 +55,10 @@ public class HUD
 		cInvincible.setCenterX(280);
 		cInvincible.setCenterY(10);
 		cInvincible.setFill(Color.BLUE);
+		
+		highScoreText.setFont(Font.font ("Verdana", FontWeight.BOLD, 20));
+		highScoreText.setFill(Color.GOLD);
+		HUDGroup.getChildren().add(highScoreText);
 	}
 
 	public void removeHealth() 
@@ -102,5 +112,10 @@ public class HUD
 		{
 			HUDGroup.getChildren().remove(cInvincible);
 		}	
+	}
+	public void setScore(String score)
+	{
+		
+		highScoreText.setText(score);
 	}
 }
