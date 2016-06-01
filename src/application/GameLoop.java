@@ -38,12 +38,12 @@ public abstract class GameLoop
 	Stage stage;
 	Group root;
 	Group componentsGroup;
+	Group dead;
 	Rectangle rainforest;
 	Image rF;
 	Character mainChar;
 	//Menu m;
 	Random r= new Random();
-
 
 	private static final Image DEATH = new Image("resources/dead.png");
 	boolean falling=true;
@@ -92,7 +92,7 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
-				if(hud.healthCount.size()>0)
+				if(hud.healthCount.size()> 0)
 				{
 					gravity();
 					//moveChar();
@@ -105,16 +105,15 @@ public abstract class GameLoop
 					scene.setOnKeyReleased(k -> actRelease(k));
 					
 
-//					System.out.println(hud.healthCount.size());
+					//System.out.println(hud.healthCount.size());
 				}
 				else
 				{
-					if((hud.healthCount.size() <= 0)) {
-						
-					}
+					reset();
+					showDeathScreen(componentsGroup);
 //					this.stop();
 //					if((hud.healthCount.size())<=0)
-//					{ 
+//					{
 //						System.out.println("here");
 //						score=System.currentTimeMillis()-startTime;
 //						TextInputDialog dialog = new TextInputDialog();
@@ -158,7 +157,16 @@ public abstract class GameLoop
 			case A:
 				aPressed=false;
 				break;
-
+			case C:
+				mainChar.loadRunning(componentsGroup);
+				break;
+			case SPACE:
+				//only works when key is released at the exact time Frank hits
+				//the platform
+				if(!jumping && falling && !spacePressed){
+					mainChar.loadRunning(componentsGroup);
+				}
+				break;
 			default:
 				break;
 		}
@@ -182,7 +190,9 @@ public abstract class GameLoop
 
 					SequentialTransition st = new SequentialTransition();
 					TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
-
+					
+					mainChar.loadJump();
+					
 					moveChar.setByX(movementSpeed*2);
 					st.getChildren().addAll(t1,t2);
 					//					if(dPressed)
@@ -211,15 +221,14 @@ public abstract class GameLoop
 					});	
 					//}
 				}
-
 				break;
 
 				//punch
 			case C:
 				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 20)
 				{
-//					mainChar.loadPunch();
 					mainChar.punch(getClosestWall());
+					mainChar.loadPunch();
 				}
 				break;
 
@@ -370,13 +379,17 @@ public abstract class GameLoop
 
 		boolean wallCollision = (mainChar.mainCharField.getBoundsInParent().intersects(closestWall.getBounds()));
 		//closestWall.component.setFill(Color.ORANGE);
-		if (wallCollision)
-
-		{
+		if (wallCollision) {
 			//mainChar.setStateCanJump(true);
 			//mainChar.mainCharField.setFill(Color.RED);
 			closestWall.breakWall(closestWall);
 			hud.removeHealth();
+			
+			//testing purposes 
+			if(hud.healthCount.size() == 0) {
+				System.out.println("Lives: " + hud.healthCount.size());
+				showDeathScreen(componentsGroup);
+			}
 		}
 		else
 		{
@@ -452,7 +465,10 @@ public abstract class GameLoop
 			{
 				hud.removeHealth();
 				gotHurt=true;
-			}
+				if(hud.healthCount.size() == 0) {
+					System.out.println("Lives: " + hud.healthCount.size());
+					showDeathScreen(componentsGroup);
+				}			}
 			
 		}
 	}
@@ -510,6 +526,7 @@ public abstract class GameLoop
 			
 			hud.removeHealth();
 			mainChar.setStateAlive(false);
+			showDeathScreen(componentsGroup);
 		}
 	}
 
@@ -526,8 +543,7 @@ public abstract class GameLoop
 		tt.play();
 	}
 
-	public void moveChar() 
-	{
+	public void moveChar() {
 		TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
 		moveChar.setCycleCount(Animation.INDEFINITE);
 		moveChar.setByX(movementSpeed);
@@ -546,18 +562,39 @@ public abstract class GameLoop
 	
 	public void showDeathScreen(Group g) {
 		ImageView death = new ImageView(DEATH);
-		g.getChildren().add(death);
 		
 		Button backToMenu = new Button("Back To Menu");
 		backToMenu.setLayoutX(450);
 		backToMenu.setLayoutY(500);
 		backToMenu.setFont(new Font("Roboto", 15));
 		backToMenu.setPrefSize(150, 50);
-		backToMenu.setOnAction(e -> backToMenuScreen(stage));	
-		componentsGroup.getChildren().add(backToMenu);
+		backToMenu.setOnAction(e -> backToMenuScreen(stage));
+		
+		g.getChildren().add(death);
+		g.getChildren().add(backToMenu);
 	}
 	
 	public void backToMenuScreen(Stage stage) {
 		new Menu(stage).displayMenu();
+	}
+	
+	//resets all variables
+	public void reset() {
+		falling=true;
+		cheatMode=false;
+		gotHealth=false;
+		gotHurt=false;
+		jumping=false;
+
+		dPressed=false;
+		aPressed=false;
+		checkDeath=false;
+
+		jumpHeight=100;
+		movementSpeed=20;
+
+		score=0;
+		hasJump=false;
+		hasInvincible=false;
 	}
 }

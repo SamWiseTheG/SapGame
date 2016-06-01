@@ -59,7 +59,7 @@ public class HUD
 	
 	public void removeHealth() 
 	{
-		if (healthCountPos > 0) 
+		if (healthCountPos >= 0) 
 		{
 			HUDGroup.getChildren().remove(healthCount.get(healthCountPos));
 			healthCount.remove(healthCount.size() - 1);
@@ -88,7 +88,6 @@ public class HUD
 
 	public void showPowerUp(int type)
 	{
-
 		if(type==1)
 		{
 			HUDGroup.getChildren().add(cJump);
@@ -98,6 +97,7 @@ public class HUD
 			HUDGroup.getChildren().add(cInvincible);
 		}	
 	}
+	
 	public void removePowerUp(int type)
 	{
 		if(type==1)

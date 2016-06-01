@@ -38,6 +38,7 @@ public class Character
 	//Spritesheet stuff
 	private static final Image PUNCH = new Image("resources/punch.png");
 	private static final Image RUNNING = new Image("resources/running.png");
+	private static final Image JUMP = new Image("resources/jumping.png");
 	private static final int COLUMNS = 2;
 	private static final int COUNT = 4;
 	private static final int OFFSET_X = 0;
@@ -45,6 +46,7 @@ public class Character
 	private static final int WIDTH = 59;
 	private static final int HEIGHT = 60;
 	
+	Animation animation;
 
 	
 	public Character(Group g, int lifeCount)
@@ -58,17 +60,12 @@ public class Character
 //		mainCharField.setFill(Color.TRANSPARENT);
 //		g.getChildren().add(mainCharField);
 		
-		loadRunning(g); 
-	}
-	
-	public void loadRunning(Group charGroup) {
 		mainCharField = new ImageView(RUNNING);
-		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 		mainCharField.setLayoutX(100);
 		mainCharField.setLayoutY(-2);
-		charGroup.getChildren().add(mainCharField);
+		g.getChildren().add(mainCharField);
 		
-		Animation animation = new SpriteAnimation(
+		animation = new SpriteAnimation(
 				mainCharField, Duration.millis(400),
 				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
 				WIDTH, HEIGHT
@@ -77,16 +74,31 @@ public class Character
 		animation.play();
 	}
 	
-	public void loadPunch(Group charGroup) {
-		mainCharField.setImage(PUNCH);
-		mainCharField.setLayoutX(100);
-		mainCharField.setLayoutY(-2);
-		charGroup.getChildren().add(mainCharField);
+	public void loadRunning(Group charGroup) {
+		mainCharField.setImage(RUNNING);
+		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
+	
+		animation = new SpriteAnimation(
+				mainCharField, Duration.millis(400),
+				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
+				WIDTH, HEIGHT
+		);
+		animation.setCycleCount(Animation.INDEFINITE);
+		animation.play();
 	}
 	
-	public void jump()
-	{
-		
+	public void loadPunch() {
+		mainCharField.setImage(PUNCH);
+		mainCharField.setViewport(new Rectangle2D(0,0, 100, 73));
+		animation.stop();
+
+	}
+	
+	public void loadJump() {
+		mainCharField.setImage(JUMP);
+		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
+		animation.stop();
+
 	}
 	
 	public void punch (Wall wall)

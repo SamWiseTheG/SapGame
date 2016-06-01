@@ -48,7 +48,7 @@ public class Menu
 			play.setLayoutY(100);
 			play.setPrefSize(100, 50);
 		Button instructions = new Button ("Instructions");
-			instructions.setLayoutX(750);
+			instructions.setLayoutX(650);
 			instructions.setLayoutY(100);
 			instructions.setStyle("-fx-base: #0099ff");
 			instructions.setTextFill(Color.BLACK);
@@ -59,7 +59,7 @@ public class Menu
 			credits.setStyle("-fx-base: #22ff00");
 			credits.setPrefSize(100, 50);
 		Button close = new Button ("Close");
-			close.setLayoutX(750);
+			close.setLayoutX(650);
 			close.setLayoutY(400);
 			close.setStyle("-fx-base: #ff00ff");
 			close.setTextFill(Color.BLACK);
