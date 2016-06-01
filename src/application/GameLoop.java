@@ -16,6 +16,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -29,6 +30,7 @@ public abstract class GameLoop
 	HUD hud;
 	PowerUp powerUp;
 	Scene scene;
+	World world;
 	Stage stage;
 	Group root;
 	Group componentsGroup;
@@ -88,7 +90,7 @@ public abstract class GameLoop
 		//movePlatform();
 		//tPlatform = new TranslateTransition(Duration.seconds(5), f.component);
 		//tPlatform.setByX(-1000);
-
+		
 		//-----------KeyEvents--------------//
 		new AnimationTimer()
 		{
@@ -119,6 +121,10 @@ public abstract class GameLoop
 					p.delete();
 					removePlatform=false;
 				}
+				if( hud.healthCount.size() <= 0 )
+				{
+					stop();
+				}
 				//System.out.println(hud.healthCount.size());
 				//				}
 				//				else 
@@ -128,6 +134,7 @@ public abstract class GameLoop
 				//}
 			}
 		}.start();
+		
 		//System.out.println("here");
 		//score=System.currentTimeMillis()-startTime;
 		//		TextInputDialog dialog = new TextInputDialog();
@@ -172,7 +179,7 @@ public abstract class GameLoop
 	{
 		switch(k.getCode())				
 		{
-			case SPACE:
+			case W:
 				if(!spacePressed && mainChar.getStateCanJump())
 				{
 					jumping=true;
@@ -217,7 +224,7 @@ public abstract class GameLoop
 				break;
 
 				//punch
-			case C:
+			case E:
 				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 30 )
 				{
 					//					mainChar.loadPunch();
@@ -257,15 +264,15 @@ public abstract class GameLoop
 				tttt.play();
 				break;
 
-			case W:
-				if (mainChar.getStateCanJump())
-				{
-					//spacePressed=true;
-					TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-					ttUp.setByY(-100);
-					ttUp.play();
-				}
-				break;
+//			case W:
+//				if (mainChar.getStateCanJump())
+//				{
+//					//spacePressed=true;
+//					TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
+//					ttUp.setByY(-100);
+//					ttUp.play();
+//				}
+//				break;
 
 			case S:
 				if(!mainChar.isStateOnPlatform())
@@ -436,13 +443,14 @@ public abstract class GameLoop
 
 			}
 			p.delete();
-			
-			if (!mainChar.mainCharField.getBoundsInParent().intersects(p.getBounds()))
-			{
-			hasScoreUp=false;
-			}
 
 		}
+		
+		if (!mainChar.mainCharField.getBoundsInParent().intersects(p.getBounds()))
+		{
+		hasScoreUp=false;
+		}
+		
 		if(System.currentTimeMillis()-jumpTimer>=10000 && hasJump)//10 seconds
 		{
 			jumpHeight=150;
@@ -579,7 +587,7 @@ public abstract class GameLoop
 			//Wall w = new Wall(componentsGroup, x, y-wallHeight, 20, wallHeight);
 			//Enemy e = new Enemy(componentsGroup, x , (y-35));
 
-			int object=1+(int)(Math.random()*(8));
+			int object=1+(int)(Math.random()*(15));
 
 			boolean moveUp=false;
 
@@ -672,6 +680,8 @@ public abstract class GameLoop
 						}
 						break;
 					case 4:
+					case 5:
+					case 6:
 						if(moveUp)
 						{
 							w = new Wall(componentsGroup, x, platformTop+150-wallHeight, 20, wallHeight);
@@ -683,7 +693,8 @@ public abstract class GameLoop
 							translateWall(speed, w, x, platformWidth);
 						}
 						break;
-					case 5:
+					case 7:
+					case 8:
 						if(moveUp)
 						{
 							e = new Enemy(componentsGroup, x , platformTop+150-35);
