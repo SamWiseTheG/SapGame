@@ -1,6 +1,7 @@
 package application;
 
 import java.awt.Component;
+import java.text.DecimalFormat;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -48,6 +49,7 @@ public abstract class GameLoop
 	boolean removePlatform=true;
 	boolean firstPlatform=true;
 	boolean morePlatforms=false;
+	boolean hasScoreUp = false;
 
 	int gameSpeed = 7500;
 	int jumpHeight=150;
@@ -55,11 +57,13 @@ public abstract class GameLoop
 	int spawnLogic = 59;
 
 	double jumpTimer;
+	double scoreTimer;
 	double invincibleTimer;
 	double startTime=(double)System.currentTimeMillis()/1000;
 
 	double score=0;
-	int currentScore = 0;
+	double addedScore=0;
+	String currentScore;
 	boolean hasJump=false;
 	boolean hasInvincible=false;
 
@@ -102,8 +106,10 @@ public abstract class GameLoop
 				checkPowerUpCollision();
 				checkEnemieCollision();
 				score=(((double)System.currentTimeMillis()/1000)-startTime);
-				hud.setScore(Double.toString((double) Math.round((score / score * 100) * 10) / 10));
-				System.out.printf("%.1f\n", score);
+				DecimalFormat df = new DecimalFormat("#0.0");
+				currentScore = df.format( score + addedScore );
+				hud.setScore(currentScore);
+				System.out.println(currentScore);
 				
 				scene.setOnKeyPressed(k -> actPress(k));
 				scene.setOnKeyReleased(k -> actRelease(k));
@@ -415,11 +421,11 @@ public abstract class GameLoop
 				hud.showPowerUp(1);
 				hasJump=true;
 			}
-			if(p.getType()==2)
+			if(p.getType()==2 && !hasScoreUp)
 			{
-				score += 10;
+				addedScore += 10;
 				hud.showPowerUp(2);
-
+				hasScoreUp = true;
 			}
 			if(p.getType()==3)
 			{
@@ -430,6 +436,11 @@ public abstract class GameLoop
 
 			}
 			p.delete();
+			
+			if (!mainChar.mainCharField.getBoundsInParent().intersects(p.getBounds()))
+			{
+			hasScoreUp=false;
+			}
 
 		}
 		if(System.currentTimeMillis()-jumpTimer>=10000 && hasJump)//10 seconds
@@ -437,6 +448,11 @@ public abstract class GameLoop
 			jumpHeight=150;
 			hud.removePowerUp(1);
 			hasJump=false;
+		}
+		if(System.currentTimeMillis()-scoreTimer>=5000 && hasScoreUp)//5 seconds
+		{
+			hud.removePowerUp(2);
+			hasScoreUp=false;
 		}
 		if(System.currentTimeMillis()-invincibleTimer>=5000 && hasInvincible)//5 seconds
 		{
