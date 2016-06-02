@@ -3,9 +3,6 @@ package application;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Scanner;
-
-import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
-
 import javafx.event.*;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -14,7 +11,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
@@ -45,6 +41,7 @@ public class Menu
 		{
 			System.out.println("FILE ERROR");
 		}
+		System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
 
 		Group menuRoot = new Group();
 		Image backgroundImage = new Image("resources/greenBackground.png", 1000, 600, false, false);

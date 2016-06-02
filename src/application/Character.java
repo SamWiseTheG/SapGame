@@ -29,6 +29,7 @@ public class Character
 	private boolean stateOnWall;
 	private boolean stateBreakWall=false;
 	private boolean stateCanJump;
+	private boolean stateRunning;
 	private double xPos;
 	private double yPos;
 //	Rectangle mainCharField;
@@ -77,7 +78,9 @@ public class Character
 	}
 	
 //Nikka
-	public void loadRunning(Group charGroup) {
+	public void loadRunning(Group charGroup) 
+	{
+		this.stateRunning = true;
 		mainCharField.setImage(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 	
@@ -90,23 +93,22 @@ public class Character
 		animation.play();
 	}
 
-	public void loadPunch() {
+	public void loadPunch() 
+	{
 		mainCharField.setImage(PUNCH);
 		mainCharField.setViewport(new Rectangle2D(0,0, 79, 60));
-		animation.stop();
+		//animation.stop();
 	}
-
-//	public void loadJump() {
-//		mainCharField.setImage(JUMP);
-//		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
-//		animation = new SpriteAnimation( mainCharField, Duration.millis(4000),1, 1, 0,0,59, 59);
-//		animation.play();
-//	}
-//end Nikka	
+	
+	public void loadJump()
+	{
+		this.stateRunning = false;
+		mainCharField.setImage(JUMP);
+		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
+	}
 	
 	public void jump()
-	{
-		
+	{	
 	}
 	
 	public void punch (Wall wall)
@@ -267,4 +269,15 @@ public class Character
 	{
 		this.stateCanJump = stateCanJump;
 	}
+	
+	public boolean isStateRunning()
+	{
+		return stateRunning;
+	}
+
+	public void setStateRunning(boolean stateRunning)
+	{
+		this.stateRunning = stateRunning;
+	}
+
 }

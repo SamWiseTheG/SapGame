@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Scanner;
-
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.SequentialTransition;
@@ -13,18 +12,15 @@ import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -32,9 +28,6 @@ import javafx.util.Duration;
 
 public abstract class GameLoop
 {
-	private boolean spacePressed=false;
-	double stageWidth;
-	double stageHeight;
 	Enemy e;
 	HUD hud;
 	PowerUp powerUp;
@@ -47,14 +40,13 @@ public abstract class GameLoop
 	Platform platformOne;
 	Image rF;
 	Character mainChar;
-	//Menu m;
-	//
+	
+	boolean spacePressed=false;
 	boolean falling=true;
 	boolean cheatMode=false;
 	boolean gotHealth=false;
 	boolean gotHurt=false;
 	boolean jumping=false;
-
 	boolean dPressed=false;
 	boolean aPressed=false;
 	boolean checkDeath=false;
@@ -63,19 +55,20 @@ public abstract class GameLoop
 	boolean morePlatforms=false;
 	boolean hasScoreUp = false;
 
+	double stageWidth;
+	double stageHeight;
 	int gameSpeed = 7500;
 	int jumpHeight=150;
 	int movementSpeed=20;
 	int spawnLogic = 59;
 
+	String currentScore;
 	double jumpTimer;
 	double scoreTimer;
 	double invincibleTimer;
 	double startTime=(double)System.currentTimeMillis()/1000;
-
 	double score=0;
 	double addedScore=0;
-	String currentScore;
 	boolean hasJump=false;
 	boolean hasInvincible=false;
 	
@@ -84,18 +77,8 @@ public abstract class GameLoop
 	private final Media media = new Media(Paths.get("src/resources/MySong2.mp3").toUri().toString());
 	private final MediaPlayer mediaPlayer = new MediaPlayer(media);
 
-
-	
-	////Make Platforms move
-	//	TranslateTransition tPlatform;
-	//	ParallelTransition ptGravity;
-	//	ParallelTransition ptJumping;
-	/////// I commented out the few lines that deal with it cuz it barely works
-
 	public GameLoop(Stage primaryStage)
 	{
-		//System.out.println("here");
-
 		stage=primaryStage;
 		root = new Group();
 		componentsGroup = new Group();
@@ -104,19 +87,14 @@ public abstract class GameLoop
 		initStage();
 		root.getChildren().add(componentsGroup);
 		scene = new Scene (root, 1000, 600);
-		//movePlatform();
-		//tPlatform = new TranslateTransition(Duration.seconds(5), f.component);
-		//tPlatform.setByX(-1000);
 		
 		//-----------KeyEvents--------------//
 		new AnimationTimer()
 		{
 			public void handle(long now)
 			{
-//				if(hud.healthCount.size()>0)
-//				{
 				gravity();
-				//moveChar();
+				checkRunning();
 				checkForPlatformCollisions();
 				checkForWallCollisions();
 				checkbottomCollision();
@@ -127,9 +105,7 @@ public abstract class GameLoop
 				score=(((double)System.currentTimeMillis()/1000)-startTime);
 				DecimalFormat df = new DecimalFormat("#0.0");
 				currentScore = df.format( score + addedScore );
-				hud.setScore(currentScore);
-				//System.out.println(currentScore);
-				
+				hud.setScore(currentScore);				
 				scene.setOnKeyPressed(k -> actPress(k));
 				scene.setOnKeyReleased(k -> actRelease(k));
 				if((System.currentTimeMillis()-startTime*1000>5000) && removePlatform)
@@ -144,63 +120,25 @@ public abstract class GameLoop
 					componentsGroup.getChildren().clear();
 					showDeathScreen( componentsGroup );
 				}
-				//System.out.println(hud.healthCount.size());
-				//				}
-				//				else 
-				//				{
-				//					this.stop();
-				//				}
-				//}
 			}
 		}.start();
-		
-		//System.out.println("here");
-		//score=System.currentTimeMillis()-startTime;
-		//		TextInputDialog dialog = new TextInputDialog();
-		//		dialog.setTitle("Score");
-		//		dialog.setHeaderText("Score");
-		//		dialog.setContentText("Please enter your name:");
-		//		Optional<String> result = dialog.showAndWait();
-		//		try 
-		//		{
-		//			File highScores = new File("src/resources/highScores.txt");
-		//			PrintWriter pr = new PrintWriter(highScores);
-		//			pr.println("High score: " + result.get()+ " - " + (int)score%1000);
-		//			pr.close();
-		//		}
-		//		catch(Exception e)
-		//		{
-		//			System.out.println("FILE ERROR");
-		//		}
 	}
 
 	public void stop(KeyEvent k, Rectangle r)
 	{
-		//		if(k.getCode()==KeyCode.A)
-		//			spacePressed=false;
 	}
 
 	public void actRelease(KeyEvent k)
 	{
 		switch (k.getCode())
 		{
-			case D:
-				dPressed=false;
-				break;
-			case A:
-				aPressed=false;
-				break;
 			case E:
-				//Nikka
 				cheatMode = false;
 				mainChar.loadRunning(componentsGroup);
-				//end Nikka
 				break;
-			case W:
 			case SPACE:
-//				mainChar.animation.stop();
-//				mainChar.loadRunning(componentsGroup);
-				break;
+				
+			
 			default:
 				break;
 		}
@@ -209,11 +147,9 @@ public abstract class GameLoop
 	{
 		switch(k.getCode())				
 		{
-			//Nikka
 			case ESCAPE:
 				stage.close();
 				break;
-			//end Nikka
 			case W:
 			case SPACE:
 				if(!spacePressed && mainChar.getStateCanJump())
@@ -221,34 +157,15 @@ public abstract class GameLoop
 					jumping=true;
 					TranslateTransition t1 = new TranslateTransition(Duration.millis(300),mainChar.mainCharField);
 					t1.setByY(-jumpHeight);
-
+					
 					TranslateTransition t2 = new TranslateTransition(Duration.millis(100),mainChar.mainCharField);
 					t2.setByY(0);
-
+					
 					SequentialTransition st = new SequentialTransition();
 					TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
-					
-					//Nikka
-//					mainChar.loadJump();
-					//end Nikka
-					
 					moveChar.setByX(movementSpeed*2);
+					
 					st.getChildren().addAll(t1,t2);
-					//					if(dPressed)
-					//					{
-					//						moveChar.play();
-					//						st.play();
-					//						st.setOnFinished(new EventHandler<ActionEvent>(){
-					//							public void handle(ActionEvent arg0) 
-					//							{
-					//								falling=true;
-					//								jumping=false;
-					//								spacePressed=true;
-					//							}
-					//						});
-					//					}
-					//					else
-					//					{
 					st.play();
 					st.setOnFinished(new EventHandler<ActionEvent>(){
 						public void handle(ActionEvent arg0) 
@@ -256,75 +173,44 @@ public abstract class GameLoop
 							falling=true;
 							jumping=false;
 							spacePressed=true;
-							
-							//Nikka
-//							mainChar.animation.stop();
-//							mainChar.loadRunning(componentsGroup);
-							//end Nikka
 						}
 					});	
-					//}
 				}
-
 				break;
-
-				//punch
 			case E:
 				if(((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 50) 
 						&& (mainChar.getMaxY()>=getClosestWall().getMaxY())
 						&& (mainChar.getMinY()<=getClosestPlatform().getMinY()))
 				{
 					mainChar.punch(getClosestWall());
-					//Nikka
 					cheatMode = true;
-					mainChar.animation.stop();
 					mainChar.loadPunch();
-					//end Nikka
 				}
 				break;
-
-				//----------------START DEVELOPMENT TOOLS-----------------
-
-				//turn gravity on/off
 			case G:
 				if(cheatMode)
 				{
-					//mainChar.mainCharField.setFill(Color.GREEN);
 					movementSpeed=30;
 					cheatMode=false;
 				}
 				else
 				{
-					//mainChar.mainCharField.setFill(Color.BLUE);
 					movementSpeed=30;
 					cheatMode=true;
 				}
 				break;
-				//movement keys
 			case D:
 				dPressed=true;
 				TranslateTransition ttt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
 				ttt.setByX(movementSpeed);
 				ttt.play();
 				break;
-
 			case A:
 				aPressed=true;
 				TranslateTransition tttt = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
 				tttt.setByX(-movementSpeed);
 				tttt.play();
 				break;
-
-//			case W:
-//				if (mainChar.getStateCanJump())
-//				{
-//					//spacePressed=true;
-//					TranslateTransition ttUp = new TranslateTransition(Duration.millis(1), mainChar.mainCharField);
-//					ttUp.setByY(-100);
-//					ttUp.play();
-//				}
-//				break;
-
 			case S:
 				if(!mainChar.isStateOnPlatform())
 				{
@@ -332,17 +218,10 @@ public abstract class GameLoop
 					ttDown.setByY(movementSpeed);
 					ttDown.play();
 				}
-
 			default:
 				break;
-				//---------------------END DEVELOPMENT TOOLS------------------------------------------------
 		}				
 	}
-
-	//	public void canJump()
-	//	{
-	//		spacePressed=false;
-	//	}
 
 	public void gravity()
 	{
@@ -359,10 +238,10 @@ public abstract class GameLoop
 			else
 			{
 				mainChar.setStateCanJump(true);
-
 			}
 		}
 	}
+	
 	public void canJump() 
 	{
 		spacePressed=false;
@@ -376,8 +255,6 @@ public abstract class GameLoop
 		double charMinX = mainChar.getMinX();
 		double charMaxX = mainChar.getMaxX();
 
-		//closestPlat.component.setFill(Color.ORANGE);
-
 		if ( (charMaxY>=(closestPlat.getMinY()-5)) && ( charMaxY<=(closestPlat.getMinY()+10) ) 
 				&& ( charMinX+21 <= closestPlat.getMaxX()) 
 				&& (charMaxX-12 >= closestPlat.getMinX()) )
@@ -390,18 +267,8 @@ public abstract class GameLoop
 		{
 			mainChar.setStateOnPlatform(false);
 			mainChar.setStateCanJump(false);
-			//closestPlat.component.setFill(Color.DARKMAGENTA);
 			falling=true;
 		}
-		//
-		//		if (mainChar.mainCharField.getBoundsInParent().intersects(closestPlat.getBounds()) && spacePressed==false)
-		//		{
-		//			mainChar.setStateCanJump(true);
-		//		}
-		//		else
-		//		{
-		//			mainChar.setStateCanJump(false);
-		//		}
 	}
 
 	public Platform getClosestPlatform()
@@ -415,7 +282,6 @@ public abstract class GameLoop
 			if( (Math.abs(p.getMinY()-charMaxY) )<=(Math.abs(closestPlat.getMinY()-charMaxY))  )
 			{
 				closestPlat=p;
-				//closestPlat.component.setFill(Color.BLUE);
 			}
 		}
 		return closestPlat;
@@ -426,12 +292,9 @@ public abstract class GameLoop
 		Wall closestWall = getClosestWall();
 
 		boolean wallCollision = (mainChar.mainCharField.getBoundsInParent().intersects(closestWall.getBounds()));
-		//closestWall.component.setFill(Color.ORANGE);
 		if (wallCollision)
 
 		{
-			//mainChar.setStateCanJump(true);
-			//mainChar.mainCharField.setFill(Color.RED);
 			closestWall.breakWall(closestWall);
 			hud.removeHealth();
 		}
@@ -829,6 +692,18 @@ public abstract class GameLoop
 	{
 	   mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 	   mediaPlayer.play();
+	}
+	
+	public void checkRunning()
+	{
+		if(!mainChar.getStateCanJump())
+		{
+			mainChar.loadJump();
+		}
+		else if( mainChar.isStateRunning() == false)
+		{
+			mainChar.loadRunning(componentsGroup);
+		}
 	}
 	
 	public void backToMenuScreen(Stage stage) 
