@@ -77,29 +77,30 @@ public class Character
 	}
 	
 //Nikka
-//	public void loadRunning(Group charGroup) {
-//		mainCharField.setImage(RUNNING);
-//		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
-//	
-//		animation = new SpriteAnimation(
-//		mainCharField, Duration.millis(400),
-//		COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
-//		WIDTH, HEIGHT
-//		);
-//		animation.setCycleCount(Animation.INDEFINITE);
-//		animation.play();
-//	}
-//
-//	public void loadPunch() {
-//		mainCharField.setImage(PUNCH);
-//		mainCharField.setViewport(new Rectangle2D(0,0, 79, 60));
-//		animation.stop();
-//	}
-//
+	public void loadRunning(Group charGroup) {
+		mainCharField.setImage(RUNNING);
+		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
+	
+		animation = new SpriteAnimation(
+		mainCharField, Duration.millis(4000),
+		COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
+		WIDTH, HEIGHT
+		);
+		animation.setCycleCount(Animation.INDEFINITE);
+		animation.play();
+	}
+
+	public void loadPunch() {
+		mainCharField.setImage(PUNCH);
+		mainCharField.setViewport(new Rectangle2D(0,0, 79, 60));
+		animation.stop();
+	}
+
 //	public void loadJump() {
 //		mainCharField.setImage(JUMP);
 //		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
-//		animation.stop();
+//		animation = new SpriteAnimation( mainCharField, Duration.millis(4000),1, 1, 0,0,59, 59);
+//		animation.play();
 //	}
 //end Nikka	
 	

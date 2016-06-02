@@ -1,7 +1,10 @@
 package application;
 
-import java.awt.Component;
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.util.Scanner;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -13,10 +16,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
@@ -38,6 +44,7 @@ public abstract class GameLoop
 	Group root;
 	Group componentsGroup;
 	Rectangle rainforest;
+	Platform platformOne;
 	Image rF;
 	Character mainChar;
 	//Menu m;
@@ -73,7 +80,12 @@ public abstract class GameLoop
 	boolean hasInvincible=false;
 	
 	private static final Image DEATH = new Image("resources/dead.png");
+	private static final Image OLDDEATH = new Image("resources/oldDead.png");
+	private final Media media = new Media(Paths.get("src/resources/MySong2.mp3").toUri().toString());
+	private final MediaPlayer mediaPlayer = new MediaPlayer(media);
 
+
+	
 	////Make Platforms move
 	//	TranslateTransition tPlatform;
 	//	ParallelTransition ptGravity;
@@ -82,12 +94,12 @@ public abstract class GameLoop
 
 	public GameLoop(Stage primaryStage)
 	{
-		System.out.println("here");
+		//System.out.println("here");
 
 		stage=primaryStage;
 		root = new Group();
 		componentsGroup = new Group();
-
+		playMusic();
 		initBackground();
 		initStage();
 		root.getChildren().add(componentsGroup);
@@ -179,11 +191,15 @@ public abstract class GameLoop
 				aPressed=false;
 				break;
 			case E:
-				cheatMode = false;
 				//Nikka
-				//mainChar.animation.stop();
-				//mainChar.loadRunning(componentsGroup);
+				cheatMode = false;
+				mainChar.loadRunning(componentsGroup);
 				//end Nikka
+				break;
+			case W:
+			case SPACE:
+//				mainChar.animation.stop();
+//				mainChar.loadRunning(componentsGroup);
 				break;
 			default:
 				break;
@@ -194,9 +210,9 @@ public abstract class GameLoop
 		switch(k.getCode())				
 		{
 			//Nikka
-			//case ESCAPE:
-				//stage.close();
-				//break;
+			case ESCAPE:
+				stage.close();
+				break;
 			//end Nikka
 			case W:
 			case SPACE:
@@ -242,6 +258,7 @@ public abstract class GameLoop
 							spacePressed=true;
 							
 							//Nikka
+//							mainChar.animation.stop();
 //							mainChar.loadRunning(componentsGroup);
 							//end Nikka
 						}
@@ -253,13 +270,15 @@ public abstract class GameLoop
 
 				//punch
 			case E:
-				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 30 )
+				if(((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 50) 
+						&& (mainChar.getMaxY()>=getClosestWall().getMaxY())
+						&& (mainChar.getMinY()<=getClosestPlatform().getMinY()))
 				{
 					mainChar.punch(getClosestWall());
 					//Nikka
-					//mainChar.animation.stop();
-					//cheatMode = true;
-					//mainChar.loadPunch();
+					cheatMode = true;
+					mainChar.animation.stop();
+					mainChar.loadPunch();
 					//end Nikka
 				}
 				break;
@@ -360,7 +379,7 @@ public abstract class GameLoop
 		//closestPlat.component.setFill(Color.ORANGE);
 
 		if ( (charMaxY>=(closestPlat.getMinY()-5)) && ( charMaxY<=(closestPlat.getMinY()+10) ) 
-				&& ( charMinX+20 <= closestPlat.getMaxX()) 
+				&& ( charMinX+21 <= closestPlat.getMaxX()) 
 				&& (charMaxX-12 >= closestPlat.getMinX()) )
 		{
 			mainChar.setStateOnPlatform(true);
@@ -586,60 +605,31 @@ public abstract class GameLoop
 	}
 	private void generateObjects()
 	{
-		//double charMaxY = mainChar.mainCharField.getBoundsInParent().getMaxY();
-		//double charMinY = mainChar.mainCharField.getBoundsInParent().getMaxY();
-		//double charMinX = mainChar.mainCharField.getBoundsInParent().getMinX();
-		//double charMaxX = mainChar.mainCharField.getBoundsInParent().getMaxX();
-
-		//Min + (int)(Math.random() * ((Max - Min) + 1))
-		//int x=(400+(int)(charMaxX+ (Math.random() * ((400)) + 1)));
-
 		int x= (int)(Math.random()*256)+1024;
 		int y= (int)(Math.random()*400)+100;
-
 		int platformWidth=150+(int)(Math.random()*(200));
 		int wallHeight = 150;
 		int randBinary = (int)(Math.random()*2);
-
-		//System.out.println(randBinary);
-		//int powType = (int)(Math.random()*3)+1;
-		//System.out.println(powType);
-		//System.out.println("x: " + x);
-		//System.out.println("y: " + y);
-		//System.out.println("width: " + width);
-
-
+		int nextPlatformHight = 130; 
 		spawnLogic++;
-		//System.out.println( i );
 
 		if( spawnLogic % 60 == 0)
 		{
-
-			//PowerUp pow = new PowerUp(componentsGroup, x, (y-15), powType);
-			//Wall w = new Wall(componentsGroup, x, y-wallHeight, 20, wallHeight);
-			//Enemy e = new Enemy(componentsGroup, x , (y-35));
-
 			int object=1+(int)(Math.random()*(15));
-
 			boolean moveUp=false;
-
-			//System.out.println(object);
 			PowerUp pow;
 			Wall w;
 			Enemy e;
 			Duration speed=Duration.millis(gameSpeed);
-
 			Platform p;
 
 			if(firstPlatform)
 			{
-				p = new Platform(componentsGroup, x, y,platformWidth);
-				translatePlatform(speed, p, x);
+				platformOne = new Platform(componentsGroup, x, y,platformWidth);
+				translatePlatform(speed, platformOne, x);
 				firstPlatform=false;
 			}
-
 			int platformTop = (int)(Platform.getPlatformsArrayList().get(0).getMaxY());
-			//System.out.println(platformTop);
 
 			if(morePlatforms)
 			{
@@ -647,13 +637,13 @@ public abstract class GameLoop
 				{
 					if(platformTop<=200)
 					{
-						p = new Platform(componentsGroup, x, platformTop+150, platformWidth);
+						p = new Platform(componentsGroup, x, platformTop+nextPlatformHight, platformWidth);
 						translatePlatform(speed, p, x);
 						moveUp=true;
 					}
 					else 
 					{
-						p = new Platform(componentsGroup, x, platformTop-150, platformWidth);
+						p = new Platform(componentsGroup, x, platformTop-nextPlatformHight, platformWidth);
 						translatePlatform(speed, p, x);
 						moveUp=false;
 					}
@@ -662,90 +652,87 @@ public abstract class GameLoop
 				{
 					if(platformTop>=400)
 					{
-						p = new Platform(componentsGroup, x, platformTop-150, platformWidth);
+						p = new Platform(componentsGroup, x, platformTop-nextPlatformHight, platformWidth);
 						translatePlatform(speed, p, x);
 						moveUp=false;
 					}
 					else 
 					{
-						p = new Platform(componentsGroup, x, platformTop+150, platformWidth);
+						p = new Platform(componentsGroup, x, platformTop+nextPlatformHight, platformWidth);
 						translatePlatform(speed, p, x);
 						moveUp=true;
-					}			
-				}				
+					}
+				}
 				switch( object )
 				{
-					case 1:
-						if(moveUp)
-						{
-							pow = new PowerUp(componentsGroup, x, platformTop+150-15, 1);
-							translatePowerUp(speed, pow, x, platformWidth);
-						}
-						else 
-						{
-							pow = new PowerUp(componentsGroup, x, platformTop-150-15, 1);
-							translatePowerUp(speed, pow, x, platformWidth);
-						}
-						break;
-					case 2:
-						if(moveUp)
-						{
-							pow = new PowerUp(componentsGroup, x, platformTop+150-15, 2);
-							translatePowerUp(speed, pow, x, platformWidth);
-						}
-						else 
-						{
-							pow = new PowerUp(componentsGroup, x, platformTop-150-15, 2);
-							translatePowerUp(speed, pow, x, platformWidth);
-						}
-						break;
-					case 3: 
-						if(moveUp)
-						{
-							pow = new PowerUp(componentsGroup, x, platformTop+150-15, 3);
-							translatePowerUp(speed, pow, x, platformWidth);
-						}
-						else 
-						{
-							pow = new PowerUp(componentsGroup, x, platformTop-150-15, 3);
-							translatePowerUp(speed, pow, x, platformWidth);
-						}
-						break;
-					case 4:
-					case 5:
-					case 6:
-						if(moveUp)
-						{
-							w = new Wall(componentsGroup, x, platformTop+150-wallHeight, 20, wallHeight);
-							translateWall(speed, w, x, platformWidth);
-						}
-						else 
-						{
-							w = new Wall(componentsGroup, x, platformTop-150-wallHeight, 20, wallHeight);
-							translateWall(speed, w, x, platformWidth);
-						}
-						break;
-					case 7:
-					case 8:
-						if(moveUp)
-						{
-							e = new Enemy(componentsGroup, x , platformTop+150-35);
-							translateEnemy( speed, e, x, platformWidth);
-						}
-						else 
-						{
-							e = new Enemy(componentsGroup, x , platformTop-150-35);
-							translateEnemy( speed, e, x, platformWidth);
-						}
-						break;
-					default:
-						break;
-
+				case 1:
+					if(moveUp)
+					{
+						pow = new PowerUp(componentsGroup, x, platformTop+nextPlatformHight-40, 1);
+						translatePowerUp(speed, pow, x, platformWidth);
+					}
+					else 
+					{
+						pow = new PowerUp(componentsGroup, x, platformTop-nextPlatformHight-40, 1);
+						translatePowerUp(speed, pow, x, platformWidth);
+					}
+					break;
+				case 2:
+					if(moveUp)
+					{
+						pow = new PowerUp(componentsGroup, x, platformTop+nextPlatformHight-40, 2);
+						translatePowerUp(speed, pow, x, platformWidth);
+					}
+					else 
+					{
+						pow = new PowerUp(componentsGroup, x, platformTop-nextPlatformHight-40, 2);
+						translatePowerUp(speed, pow, x, platformWidth);
+					}
+					break;
+				case 3: 
+					if(moveUp)
+					{
+						pow = new PowerUp(componentsGroup, x, platformTop+nextPlatformHight-40, 3);
+						translatePowerUp(speed, pow, x, platformWidth);
+					}
+					else 
+					{
+						pow = new PowerUp(componentsGroup, x, platformTop-nextPlatformHight-40, 3);
+						translatePowerUp(speed, pow, x, platformWidth);
+					}
+					break;
+				case 4:
+				case 5:
+				case 6:
+					if(moveUp)
+					{
+						w = new Wall(componentsGroup, x, platformTop+nextPlatformHight-wallHeight, 20, wallHeight);
+						translateWall(speed, w, x, platformWidth);
+					}
+					else 
+					{
+						w = new Wall(componentsGroup, x, platformTop-nextPlatformHight-wallHeight, 20, wallHeight);
+						translateWall(speed, w, x, platformWidth);
+					}
+					break;
+				case 7:
+				case 8:
+					if(moveUp)
+					{
+						e = new Enemy(componentsGroup, x+35 , platformTop+nextPlatformHight-35);
+						translateEnemy( speed, e, x, platformWidth);
+					}
+					else 
+					{
+						e = new Enemy(componentsGroup, x+35 , platformTop-nextPlatformHight-35);
+						translateEnemy( speed, e, x, platformWidth);
+					}
+					break;
+				default:
+					break;
 				}
 			}
 			morePlatforms=true;
-
-			//System.out.println("Array size: " + Platform.getPlatformsArrayList().size());
 		}
 	}
 
@@ -838,6 +825,12 @@ public abstract class GameLoop
 		moveChar.play();
 	}
 	
+	public void playMusic()
+	{
+	   mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+	   mediaPlayer.play();
+	}
+	
 	public void backToMenuScreen(Stage stage) 
 	{
 		new Menu(stage).displayMenu();
@@ -845,17 +838,87 @@ public abstract class GameLoop
 	
 	public void showDeathScreen(Group g) {
 		ImageView death = new ImageView(DEATH);
+		ImageView oldDeath = new ImageView(OLDDEATH);
 
-		Button backToMenu = new Button("Back To Menu");
+		Button backToMenu = new Button("Menu");
+		Button submitScore = new Button("Submit");
+
 		backToMenu.setLayoutX(450);
 		backToMenu.setLayoutY(500);
 		backToMenu.setFont(new Font("Roboto", 15));
-		backToMenu.setPrefSize(150, 50);
+		backToMenu.setStyle("-fx-base: #AA0121");
+		backToMenu.setTextFill(Color.BISQUE);
+		backToMenu.setPrefSize(100, 50);
 		backToMenu.setOnAction(e -> backToMenuScreen(stage));
 
-		g.getChildren().add(death);
-		g.getChildren().add(backToMenu);
+		TextField highScoreInput = new TextField();
+		highScoreInput.setLayoutX(350);
+		highScoreInput.setLayoutY(450);
+
+		submitScore.setLayoutX(550);
+		submitScore.setLayoutY(450);
+		submitScore.setFont(new Font("Roboto", 15));
+		submitScore.setPrefSize(100, 25);
+		submitScore.setOnAction(e -> editHighScore(highScoreInput.getText()));
+		mediaPlayer.stop();
+		if(checkHighScore())
+		{
+			g.getChildren().add(death);
+			g.getChildren().add(highScoreInput);
+			g.getChildren().add(submitScore);
 		}
+		else 
+		{
+			g.getChildren().add(oldDeath);
+			g.getChildren().add(backToMenu);
+
+		}
+	}
+
+	private boolean checkHighScore() 
+	{
+		String highScoreString="";
+		double highScoreDouble =0;
+
+		try 
+		{
+			File highScoreFile = new File("src/resources/highScores.txt");
+			Scanner input =new Scanner(highScoreFile);
+			highScoreString = input.nextLine();
+			input.close();
+		}
+		catch(Exception e)
+		{
+
+		}
+		highScoreDouble=(Double.parseDouble(highScoreString.replaceAll("[\\D]", ""))/10);
+
+		Double finalHighScore = Double.parseDouble(currentScore);
+		if(finalHighScore>highScoreDouble)
+		{
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
+	}
+
+	private void editHighScore(String highScoreName)
+	{
+		try 
+		{
+			File highScoreFile = new File("src/resources/highScores.txt");
+			PrintWriter pr = new PrintWriter(highScoreFile);
+			pr.println("High score: " + highScoreName+ " - " + currentScore);
+			pr.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println("FILE ERROR");
+		}
+		backToMenuScreen(stage);
+	}
 
 	public abstract void initStage();
 	public abstract void initBackground();

@@ -23,7 +23,7 @@ public class SAP extends Application
 			}
 		});
 		new Menu(primaryStage).displayMenu();
-		primaryStage.setTitle("Super Awesome Platformer!!!!");
+		primaryStage.setTitle("Marshmallow Mayhem");
 		//layout.setStyle("-fx-background-color: green;")
 		primaryStage.show();
 	}

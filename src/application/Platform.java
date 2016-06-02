@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -13,6 +15,7 @@ public class Platform extends RectangleComponent
 {
 	protected static ArrayList<Platform> platformsArray = new ArrayList<Platform>();
 	Group componentsGrp;
+	private static final Image PLATFORM = new Image("resources/platform.png");
 	//Rectangle component;
 	
 	public Platform(Group componentsGroup, double x, double y, double width, double height, Color color) 
@@ -31,7 +34,7 @@ public class Platform extends RectangleComponent
 		component = new Rectangle();
 		component.setWidth(width);
 		component.setHeight(20);
-		component.setFill(Color.DARKMAGENTA);
+		component.setFill(new ImagePattern(PLATFORM));
 		component.setTranslateX(x);
 		component.setTranslateY(y);
 		

@@ -5,16 +5,17 @@ import java.util.ArrayList;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
 
-public class PowerUp
+public class PowerUp extends RectangleComponent
 {
-	// the shape of the power up
-	Circle component;
-	// the group sets precedent of the created objects
+	private static final Image GREEN = new Image("resources/greenPowerup.png");
+	private static final Image RED = new Image("resources/redPowerup.png");
+	private static final Image BLUE = new Image("resources/bluePowerup.png");
 	Group powerUpGroup;
-	// the list of all the power ups
 	protected static ArrayList<PowerUp> powerUpArray = new ArrayList<PowerUp>();
 	private int type;
 	
@@ -22,25 +23,26 @@ public class PowerUp
 	public PowerUp( Group g, double x, double y, int type )
 	{
 		powerUpGroup = g;
-		component = new Circle();
+		component = new Rectangle();
 		powerUpArray.add( 0, this );
-		component.setRadius( 15 );
+		component.setWidth(30);
+		component.setHeight(40);
 		component.setTranslateX( x );
 		component.setTranslateY( y );
 		if( type == 1 )
 		{
-			component.setFill( Color.FORESTGREEN );
-			setType(1);
+		component.setFill( new ImagePattern(GREEN) );
+		setType(1);
 		}
 		else if( type == 2 )
 		{
-			component.setFill( Color.DARKBLUE );
-			setType(2);
+		component.setFill( new ImagePattern(BLUE) );
+		setType(2);
 		}
 		else if( type == 3 )
 		{
-			component.setFill( Color.CRIMSON );
-			setType(3);
+		component.setFill( new ImagePattern(RED) );
+		setType(3);
 		}
 		g.getChildren().add( component );
 	}

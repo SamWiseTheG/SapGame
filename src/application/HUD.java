@@ -4,33 +4,39 @@ import java.util.ArrayList;
 import javafx.scene.Group;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class HUD 
+public class HUD extends RectangleComponent
 {
 	Group HUDGroup = new Group();	
 	ArrayList<ImageView> healthCount = new ArrayList<ImageView>();
 	ArrayList<Circle> powerUp = new ArrayList<Circle>();
 
+	private static final Image POWERUP = new Image("resources/greenPowerup.png");
 	int healthCountPos;
 	int x = 13;
 	int y = 11;
 	ImageView livesView;
 	String score="0";
-	Circle cJump = new Circle(10);
+//	Circle cJump = new Circle(10);
 	Circle cInvincible = new Circle(10);
 	Text highScoreText = new Text(20, 20, score);
-
-	
+	Rectangle component = new Rectangle();
 
 
 	private static final Image HEARTS = new Image("resources/chocolate.png");
 
 	public HUD(Group root, int lifeCount) 
 	{
+		component.setWidth(20);
+		component.setHeight(30);
+		component.setFill(new ImagePattern(POWERUP));
+		
 		root.getChildren().add(HUDGroup);
 		for (int i = 0; i <= lifeCount-1; i++) 
 		{
@@ -49,9 +55,9 @@ public class HUD
 			x = x + 35;
 		}
 		healthCountPos = healthCount.size() - 1;
-		cJump.setCenterX(250);
-		cJump.setCenterY(10);
-		cJump.setFill(Color.GREEN);
+		component.setLayoutX(250);
+		component.setLayoutY(10);
+		component.setFill(Color.GREEN);
 		cInvincible.setCenterX(280);
 		cInvincible.setCenterY(10);
 		cInvincible.setFill(Color.BLUE);
@@ -92,10 +98,13 @@ public class HUD
 
 	public void showPowerUp(int type)
 	{
+		component.setWidth(20);
+		component.setHeight(30);
+		component.setFill(new ImagePattern(POWERUP));	
 
 		if(type==1)
 		{
-			HUDGroup.getChildren().add(cJump);
+			HUDGroup.getChildren().add(component);
 		}
 		if(type==2)
 		{
@@ -104,9 +113,13 @@ public class HUD
 	}
 	public void removePowerUp(int type)
 	{
+		component.setWidth(20);
+		component.setHeight(30);
+		component.setFill(new ImagePattern(POWERUP));
+		
 		if(type==1)
 		{
-			HUDGroup.getChildren().remove(cJump);
+			HUDGroup.getChildren().remove(component);
 		}	
 		if(type==2)
 		{
