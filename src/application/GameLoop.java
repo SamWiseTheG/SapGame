@@ -12,12 +12,15 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -68,6 +71,8 @@ public abstract class GameLoop
 	String currentScore;
 	boolean hasJump=false;
 	boolean hasInvincible=false;
+	
+	private static final Image DEATH = new Image("resources/dead.png");
 
 	////Make Platforms move
 	//	TranslateTransition tPlatform;
@@ -111,7 +116,7 @@ public abstract class GameLoop
 				DecimalFormat df = new DecimalFormat("#0.0");
 				currentScore = df.format( score + addedScore );
 				hud.setScore(currentScore);
-				System.out.println(currentScore);
+				//System.out.println(currentScore);
 				
 				scene.setOnKeyPressed(k -> actPress(k));
 				scene.setOnKeyReleased(k -> actRelease(k));
@@ -124,6 +129,8 @@ public abstract class GameLoop
 				if( hud.healthCount.size() <= 0 )
 				{
 					stop();
+					componentsGroup.getChildren().clear();
+					showDeathScreen( componentsGroup );
 				}
 				//System.out.println(hud.healthCount.size());
 				//				}
@@ -171,6 +178,13 @@ public abstract class GameLoop
 			case A:
 				aPressed=false;
 				break;
+			case E:
+				cheatMode = false;
+				//Nikka
+				//mainChar.animation.stop();
+				//mainChar.loadRunning(componentsGroup);
+				//end Nikka
+				break;
 			default:
 				break;
 		}
@@ -179,7 +193,13 @@ public abstract class GameLoop
 	{
 		switch(k.getCode())				
 		{
+			//Nikka
+			//case ESCAPE:
+				//stage.close();
+				//break;
+			//end Nikka
 			case W:
+			case SPACE:
 				if(!spacePressed && mainChar.getStateCanJump())
 				{
 					jumping=true;
@@ -191,7 +211,11 @@ public abstract class GameLoop
 
 					SequentialTransition st = new SequentialTransition();
 					TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
-
+					
+					//Nikka
+//					mainChar.loadJump();
+					//end Nikka
+					
 					moveChar.setByX(movementSpeed*2);
 					st.getChildren().addAll(t1,t2);
 					//					if(dPressed)
@@ -216,6 +240,10 @@ public abstract class GameLoop
 							falling=true;
 							jumping=false;
 							spacePressed=true;
+							
+							//Nikka
+//							mainChar.loadRunning(componentsGroup);
+							//end Nikka
 						}
 					});	
 					//}
@@ -227,8 +255,12 @@ public abstract class GameLoop
 			case E:
 				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 30 )
 				{
-					//					mainChar.loadPunch();
 					mainChar.punch(getClosestWall());
+					//Nikka
+					//mainChar.animation.stop();
+					//cheatMode = true;
+					//mainChar.loadPunch();
+					//end Nikka
 				}
 				break;
 
@@ -805,6 +837,25 @@ public abstract class GameLoop
 		moveChar.setAutoReverse(true);
 		moveChar.play();
 	}
+	
+	public void backToMenuScreen(Stage stage) 
+	{
+		new Menu(stage).displayMenu();
+	} 
+	
+	public void showDeathScreen(Group g) {
+		ImageView death = new ImageView(DEATH);
+
+		Button backToMenu = new Button("Back To Menu");
+		backToMenu.setLayoutX(450);
+		backToMenu.setLayoutY(500);
+		backToMenu.setFont(new Font("Roboto", 15));
+		backToMenu.setPrefSize(150, 50);
+		backToMenu.setOnAction(e -> backToMenuScreen(stage));
+
+		g.getChildren().add(death);
+		g.getChildren().add(backToMenu);
+		}
 
 	public abstract void initStage();
 	public abstract void initBackground();

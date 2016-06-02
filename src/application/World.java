@@ -32,7 +32,7 @@ public class World extends GameLoop
 	public void initBackground() 
 	{
 		background = new ImageView(RAINFOREST);
-		TranslateTransition tt = new TranslateTransition(Duration.millis(10000), background);
+		TranslateTransition tt = new TranslateTransition(Duration.millis(7500), background);
 		tt.setFromX(0);
 		tt.setToX(-1024);
 		tt.setInterpolator( Interpolator.LINEAR );

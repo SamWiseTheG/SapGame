@@ -34,10 +34,12 @@ public class Character
 //	Rectangle mainCharField;
 	
 	ImageView mainCharField;
+	Animation animation;
 	
 	//Spritesheet stuff
 	private static final Image PUNCH = new Image("resources/punch.png");
 	private static final Image RUNNING = new Image("resources/running.png");
+	private static final Image JUMP = new Image("resources/jumping.png");
 	private static final int COLUMNS = 2;
 	private static final int COUNT = 4;
 	private static final int OFFSET_X = 0;
@@ -61,7 +63,7 @@ public class Character
 		mainCharField = new ImageView(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 		mainCharField.setLayoutX(100);
-		mainCharField.setLayoutY(-2);
+		mainCharField.setLayoutY(0);
 		g.getChildren().add(mainCharField);
 		
 		Animation animation = new SpriteAnimation(
@@ -73,13 +75,33 @@ public class Character
 		animation.play();
 	
 	}
+	
+//Nikka
+//	public void loadRunning(Group charGroup) {
+//		mainCharField.setImage(RUNNING);
+//		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 //	
+//		animation = new SpriteAnimation(
+//		mainCharField, Duration.millis(400),
+//		COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
+//		WIDTH, HEIGHT
+//		);
+//		animation.setCycleCount(Animation.INDEFINITE);
+//		animation.play();
+//	}
+//
 //	public void loadPunch() {
 //		mainCharField.setImage(PUNCH);
-//		mainCharField.setLayoutX(100);
-//		mainCharField.setLayoutY(-2);
-//		g.getChildren().add(mainCharField);
+//		mainCharField.setViewport(new Rectangle2D(0,0, 79, 60));
+//		animation.stop();
 //	}
+//
+//	public void loadJump() {
+//		mainCharField.setImage(JUMP);
+//		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
+//		animation.stop();
+//	}
+//end Nikka	
 	
 	public void jump()
 	{
