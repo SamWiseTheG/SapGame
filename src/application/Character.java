@@ -62,7 +62,7 @@ public class Character
 		
 		mainCharField = new ImageView(RUNNING);
 		mainCharField.setLayoutX(100);
-		mainCharField.setLayoutY(-2);
+		mainCharField.setLayoutY(0);
 		g.getChildren().add(mainCharField);
 		
 		animation = new SpriteAnimation(
@@ -75,6 +75,7 @@ public class Character
 	}
 	
 	public void loadRunning(Group charGroup) {
+//		animation.stop();
 		mainCharField.setImage(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 	
@@ -89,16 +90,14 @@ public class Character
 	
 	public void loadPunch() {
 		mainCharField.setImage(PUNCH);
-		mainCharField.setViewport(new Rectangle2D(0,0, 100, 73));
+		mainCharField.setViewport(new Rectangle2D(0,0, 79, 60));
 		animation.stop();
-
 	}
 	
 	public void loadJump() {
 		mainCharField.setImage(JUMP);
 		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
 		animation.stop();
-
 	}
 	
 	public void punch (Wall wall)
@@ -125,12 +124,7 @@ public class Character
 	{
 		return mainCharField.getBoundsInParent().getMaxX();
 	}
-	
-	///Movement
-	public void move(double x, double y)
-	{
-		
-	}
+
 	
 	//adds a Life
 	public void addLife(int lives)

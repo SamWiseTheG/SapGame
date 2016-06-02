@@ -109,8 +109,8 @@ public abstract class GameLoop
 				}
 				else
 				{
-					reset();
 					showDeathScreen(componentsGroup);
+					reset();
 //					this.stop();
 //					if((hud.healthCount.size())<=0)
 //					{
@@ -158,14 +158,15 @@ public abstract class GameLoop
 				aPressed=false;
 				break;
 			case C:
+				cheatMode = false;
+				mainChar.animation.stop();
 				mainChar.loadRunning(componentsGroup);
 				break;
 			case SPACE:
 				//only works when key is released at the exact time Frank hits
 				//the platform
-				if(!jumping && falling && !spacePressed){
-					mainChar.loadRunning(componentsGroup);
-				}
+//				mainChar.animation.stop();
+//				mainChar.loadRunning(componentsGroup);
 				break;
 			default:
 				break;
@@ -192,6 +193,7 @@ public abstract class GameLoop
 					TranslateTransition moveChar = new TranslateTransition(Duration.millis(100), mainChar.mainCharField);
 					
 					mainChar.loadJump();
+
 					
 					moveChar.setByX(movementSpeed*2);
 					st.getChildren().addAll(t1,t2);
@@ -216,7 +218,9 @@ public abstract class GameLoop
 						{
 							falling=true;
 							jumping=false;
-							spacePressed=true;
+							spacePressed=true;	
+							
+							mainChar.loadRunning(componentsGroup);
 						}
 					});	
 					//}
@@ -228,6 +232,7 @@ public abstract class GameLoop
 				if((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 20)
 				{
 					mainChar.punch(getClosestWall());
+					cheatMode = true;
 					mainChar.loadPunch();
 				}
 				break;
@@ -563,7 +568,7 @@ public abstract class GameLoop
 	public void showDeathScreen(Group g) {
 		ImageView death = new ImageView(DEATH);
 		
-		Button backToMenu = new Button("Back To Menu");
+		Button backToMenu = new Button("Exit");
 		backToMenu.setLayoutX(450);
 		backToMenu.setLayoutY(500);
 		backToMenu.setFont(new Font("Roboto", 15));
@@ -575,26 +580,13 @@ public abstract class GameLoop
 	}
 	
 	public void backToMenuScreen(Stage stage) {
-		new Menu(stage).displayMenu();
-	}
+		stage.close();
+	} 
 	
 	//resets all variables
 	public void reset() {
-		falling=true;
-		cheatMode=false;
-		gotHealth=false;
-		gotHurt=false;
-		jumping=false;
-
-		dPressed=false;
-		aPressed=false;
 		checkDeath=false;
-
-		jumpHeight=100;
-		movementSpeed=20;
-
 		score=0;
-		hasJump=false;
-		hasInvincible=false;
+	
 	}
 }
