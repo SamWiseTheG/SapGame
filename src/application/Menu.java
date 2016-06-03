@@ -41,7 +41,7 @@ public class Menu
 		{
 			System.out.println("FILE ERROR");
 		}
-		System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
+		//System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
 
 		Group menuRoot = new Group();
 		Image backgroundImage = new Image("resources/greenBackground.png", 1000, 600, false, false);
@@ -56,7 +56,7 @@ public class Menu
 		Button instructionsButton = new Button ("Instructions");
 			instructionsButton.setLayoutX(650);
 			instructionsButton.setLayoutY(100);
-			instructionsButton.setFont(new Font("Roboto", 15));
+			instructionsButton.setFont(new Font("Roboto", 14));
 			instructionsButton.setStyle("-fx-base: #AA0121");
 			instructionsButton.setTextFill(Color.BISQUE);
 			instructionsButton.setPrefSize(100, 50);

@@ -1,16 +1,11 @@
 package application;
 
-import java.io.*;
-import java.util.*;
-
-import com.sun.corba.se.spi.orbutil.fsm.Input;
-
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class SAP extends Application 
+public class MarshmallowMeyham extends Application 
 {
 	@Override
 	public void start(Stage primaryStage) 
@@ -24,7 +19,6 @@ public class SAP extends Application
 		});
 		new Menu(primaryStage).displayMenu();
 		primaryStage.setTitle("Marshmallow Mayhem");
-		//layout.setStyle("-fx-background-color: green;")
 		primaryStage.show();
 	}
 

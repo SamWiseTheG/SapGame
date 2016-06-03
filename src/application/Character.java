@@ -1,9 +1,5 @@
 package application;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import application.SpriteAnimation;
@@ -12,8 +8,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class Character 
@@ -27,16 +21,15 @@ public class Character
 	private boolean stateInvincible;
 	private boolean stateOnEnemy;
 	private boolean stateOnWall;
-	private boolean stateBreakWall=false;
 	private boolean stateCanJump;
 	private boolean stateRunning;
 	private double xPos;
 	private double yPos;
-//	Rectangle mainCharField;
-	
+	//	Rectangle mainCharField;
+
 	ImageView mainCharField;
 	Animation animation;
-	
+
 	//Spritesheet stuff
 	private static final Image PUNCH = new Image("resources/punch.png");
 	private static final Image RUNNING = new Image("resources/running.png");
@@ -47,48 +40,43 @@ public class Character
 	private static final int OFFSET_Y = 0;
 	private static final int WIDTH = 59;
 	private static final int HEIGHT = 60;
-	
 
-	
+
+
 	public Character(Group g, int lifeCount)
 	{
-		
+
 		new Timer().schedule(new TimerTask() {public void run() {stateInvincible = false;}
 		}, 0, 2000);
-//		mainCharField = new Rectangle (50,50);
-//		mainCharField.setLayoutX(100);
-//		mainCharField.setLayoutY(0);
-//		mainCharField.setFill(Color.TRANSPARENT);
-//		g.getChildren().add(mainCharField);
-		
+
+
 		mainCharField = new ImageView(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
 		mainCharField.setLayoutX(100);
 		mainCharField.setLayoutY(0);
 		g.getChildren().add(mainCharField);
-		
+
 		Animation animation = new SpriteAnimation(
 				mainCharField, Duration.millis(400),
 				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
 				WIDTH, HEIGHT
-		);
+				);
 		animation.setCycleCount(Animation.INDEFINITE);
 		animation.play();
-	
+
 	}
-	
-//Nikka
+
 	public void loadRunning(Group charGroup) 
 	{
 		this.stateRunning = true;
 		mainCharField.setImage(RUNNING);
 		mainCharField.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH,HEIGHT ));
-	
+
 		animation = new SpriteAnimation(
-		mainCharField, Duration.millis(4000),
-		COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
-		WIDTH, HEIGHT
-		);
+				mainCharField, Duration.millis(4000),
+				COUNT, COLUMNS, OFFSET_X, OFFSET_Y,
+				WIDTH, HEIGHT
+				);
 		animation.setCycleCount(Animation.INDEFINITE);
 		animation.play();
 	}
@@ -99,29 +87,29 @@ public class Character
 		mainCharField.setViewport(new Rectangle2D(0,0, 79, 60));
 		//animation.stop();
 	}
-	
+
 	public void loadJump()
 	{
 		this.stateRunning = false;
 		mainCharField.setImage(JUMP);
 		mainCharField.setViewport(new Rectangle2D(0,0, 59, 59));
 	}
-	
+
 	public void jump()
 	{	
 	}
-	
+
 	public void punch (Wall wall)
 	{
 		wall.breakWall(wall);
 	}
-	
+
 	//Get Bounds
 	public double getMinY()
 	{
 		return mainCharField.getBoundsInParent().getMinY();
 	}
-	
+
 	public double getMaxY()
 	{
 		return mainCharField.getBoundsInParent().getMaxY();
@@ -130,26 +118,26 @@ public class Character
 	{
 		return mainCharField.getBoundsInParent().getMinX();
 	}
-	
+
 	public double getMaxX()
 	{
 		return mainCharField.getBoundsInParent().getMaxX();
 	}
-	
+
 	///Movement
 	public void move(double x, double y)
 	{
-		
+
 	}
-	
+
 	//adds a Life
 	public void addLife(int lives)
 	{
 		lives++;
 	}
-	
+
 	//Removes a life
-	
+
 	////Setters/Getters
 	public int getLives() 
 	{
@@ -269,7 +257,7 @@ public class Character
 	{
 		this.stateCanJump = stateCanJump;
 	}
-	
+
 	public boolean isStateRunning()
 	{
 		return stateRunning;

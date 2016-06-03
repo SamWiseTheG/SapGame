@@ -1,15 +1,11 @@
 package application;
 
 import java.util.ArrayList;
-
-import javafx.animation.Animation;
-import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 public class Platform extends RectangleComponent
 {
