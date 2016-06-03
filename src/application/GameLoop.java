@@ -137,7 +137,7 @@ public abstract class GameLoop
 				break;
 		}
 	}
-	
+
 	private void actPress(KeyEvent k)
 	{
 		switch(k.getCode())				
@@ -633,8 +633,6 @@ public abstract class GameLoop
 		eTranslate.play();
 	}
 
-
-
 	private void playMusic()
 	{
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
@@ -658,15 +656,31 @@ public abstract class GameLoop
 		new Menu(stage).displayMenu();
 	} 
 
-	private void showDeathScreen(Group g) 
-	{
+	private void showDeathScreen(Group g) {
 		ImageView death = new ImageView(DEATH);
 		ImageView oldDeath = new ImageView(OLDDEATH);
 
 		Button backToMenu = new Button("Menu");
 		Button submitScore = new Button("Submit");
+		Button retry = new Button ("Retry");
 
-		backToMenu.setLayoutX(450);
+		retry.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle (ActionEvent event)
+			{
+				new World(stage).display();	
+			}
+		});
+
+		retry.setLayoutX(550);
+		retry.setLayoutY(500);
+		retry.setFont(new Font("Roboto", 15));
+		retry.setStyle("-fx-base: #AA0121");
+		retry.setTextFill(Color.BISQUE);
+		retry.setPrefSize(100, 50);
+
+		backToMenu.setLayoutX(350);
 		backToMenu.setLayoutY(500);
 		backToMenu.setFont(new Font("Roboto", 15));
 		backToMenu.setStyle("-fx-base: #AA0121");
@@ -695,6 +709,7 @@ public abstract class GameLoop
 		{
 			g.getChildren().add(oldDeath);
 			g.getChildren().add(backToMenu);
+			g.getChildren().add(retry);
 
 		}
 	}
