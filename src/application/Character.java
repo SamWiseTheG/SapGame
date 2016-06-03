@@ -23,6 +23,7 @@ public class Character
 	private boolean stateOnWall;
 	private boolean stateCanJump;
 	private boolean stateRunning;
+	public boolean statePunching=false;
 	private double xPos;
 	private double yPos;
 	//	Rectangle mainCharField;
@@ -268,4 +269,13 @@ public class Character
 		this.stateRunning = stateRunning;
 	}
 
+	public boolean isStatePunching()
+	{
+		return statePunching;
+	}
+
+	public void setStatePunching(boolean statePunching)
+	{
+		this.statePunching = statePunching;
+	}
 }

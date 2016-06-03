@@ -54,15 +54,14 @@ public class HUD extends RectangleComponent
 			x = x + 35;
 		}
 		healthCountPos = healthCount.size() - 1;
-		component.setLayoutX(250);
-		component.setLayoutY(10);
-		component.setFill(Color.GREEN);
+		component.setLayoutX(20);
+		component.setLayoutY(50);
 		cInvincible.setCenterX(280);
 		cInvincible.setCenterY(10);
 		cInvincible.setFill(Color.BLUE);
 		
 		highScoreText.setFont(Font.font ("Verdana", FontWeight.BOLD, 20));
-		highScoreText.setFill(Color.GOLD);
+		highScoreText.setFill(Color.BISQUE);
 		HUDGroup.getChildren().add(highScoreText);
 	}
 
@@ -112,9 +111,6 @@ public class HUD extends RectangleComponent
 	}
 	public void removePowerUp(int type)
 	{
-		component.setWidth(20);
-		component.setHeight(30);
-		component.setFill(new ImagePattern(POWERUP));
 		
 		if(type==1)
 		{

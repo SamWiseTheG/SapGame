@@ -5,6 +5,9 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.Scanner;
+
+import com.sun.medialib.mlib.mediaLibException;
+
 import javafx.animation.AnimationTimer;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
@@ -56,8 +59,6 @@ public abstract class GameLoop
 	boolean jumping=false;
 	boolean falling=true;
 
-
-
 	double stageWidth;
 	double stageHeight;
 
@@ -65,6 +66,8 @@ public abstract class GameLoop
 	int jumpHeight=150;
 	int movementSpeed=20;
 	int spawnLogic = 59;
+
+	int randPUNCH=0;
 
 	String currentScore;
 	double scoreTimer;
@@ -76,10 +79,40 @@ public abstract class GameLoop
 	private static final Image OLDDEATH = new Image("resources/oldDead.png");
 
 	private final Media media = new Media(Paths.get("src/resources/MySong2.mp3").toUri().toString());
+
+	//private final Media death = new Media(Paths.get("src/resources/DEATH.mp3").toUri().toString());
+
 	private final MediaPlayer mediaPlayer = new MediaPlayer(media);
+	
+	private final MediaPlayer punch1Player = new MediaPlayer(new Media(Paths.get("src/resources/DOOU.mp3").toUri().toString()));
+	private final MediaPlayer punch2Player = new MediaPlayer(new Media(Paths.get("src/resources/KAPAOOW.mp3").toUri().toString()));
+	private final MediaPlayer punch3Player = new MediaPlayer(new Media(Paths.get("src/resources/PEWWWWWW.mp3").toUri().toString()));
+	private final MediaPlayer punch4Player = new MediaPlayer(new Media(Paths.get("src/resources/POUW.mp3").toUri().toString()));
+	private final MediaPlayer punch5Player = new MediaPlayer(new Media(Paths.get("src/resources/WATTAA.mp3").toUri().toString()));
+	private final MediaPlayer punch6Player = new MediaPlayer(new Media(Paths.get("src/resources/WAPOW.mp3").toUri().toString()));
+	private final MediaPlayer punch7Player = new MediaPlayer(new Media(Paths.get("src/resources/WAPA.mp3").toUri().toString()));
+	private final MediaPlayer punch8Player = new MediaPlayer(new Media(Paths.get("src/resources/WACHUU.mp3").toUri().toString()));
+	private final MediaPlayer deathPlayer = new MediaPlayer(new Media(Paths.get("src/resources/DEATH.mp3").toUri().toString()));
+
+
+	private MediaPlayer[] mediaArray = new MediaPlayer[9];
+
 
 	public GameLoop(Stage primaryStage)
 	{
+		
+		mediaArray[0]=deathPlayer;
+		mediaArray[1]=punch1Player;
+		mediaArray[2]=punch2Player;
+		mediaArray[3]=punch3Player;
+		mediaArray[4]=punch4Player;
+		mediaArray[5]=punch5Player;
+		mediaArray[6]=punch6Player;
+		mediaArray[7]=punch7Player;
+		mediaArray[8]=punch8Player;
+
+
+		
 		stage=primaryStage;
 		root = new Group();
 		componentsGroup = new Group();
@@ -93,13 +126,16 @@ public abstract class GameLoop
 		{
 			public void handle(long now)
 			{
+
 				gravity();
 				checkRunning();
+				checkPunching();
 				checkPlatformCollisions();
 				checkForWallCollisions();
 				checkbottomCollision();
 				generateObjects();
 				deleteObjects();
+				randPUNCH= (int)(Math.random()*7)+1;
 				checkPowerUpCollision();
 				checkEnemieCollision();
 				score=(((double)System.currentTimeMillis()/1000)-startTime);
@@ -118,6 +154,10 @@ public abstract class GameLoop
 				if( hud.healthCount.size() <= 0 )
 				{
 					stop();
+					Platform.reset();
+					Enemy.reset();
+					PowerUp.resetArrayList();
+					Wall.reset();
 					componentsGroup.getChildren().clear();
 					showDeathScreen( componentsGroup );
 				}
@@ -131,6 +171,7 @@ public abstract class GameLoop
 		{
 			case E:
 				cheatMode = false;
+				mainChar.statePunching=false;
 				mainChar.loadRunning(componentsGroup);
 				break;
 			default:
@@ -173,14 +214,19 @@ public abstract class GameLoop
 				}
 				break;
 			case E:
-				if(((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 50) 
-						&& (mainChar.getMaxY()>=getClosestWall().getMaxY())
-						&& (mainChar.getMinY()<=getClosestPlatform().getMinY()))
+				if(hud.healthCount.size()>0)
 				{
-					mainChar.punch(getClosestWall());
-					cheatMode = true;
-					mainChar.loadPunch();
-					cheatMode=false;
+					if(((getClosestWall().getMinX())-(mainChar.getMaxX()) <= 100) 
+							&& (mainChar.getMaxY()>=getClosestWall().getMaxY())
+							&& (mainChar.getMinY()<=getClosestPlatform().getMinY()))
+					{
+						mainChar.punch(getClosestWall());
+						cheatMode = true;
+						mainChar.statePunching=true;
+						//mainChar.loadPunch();
+						cheatMode=false;
+						mediaArray[randPUNCH].play();
+					}
 				}
 				break;
 			case G:
@@ -639,24 +685,16 @@ public abstract class GameLoop
 		mediaPlayer.play();
 	}
 
-	private void checkRunning()
-	{
-		if(!mainChar.getStateCanJump())
-		{
-			mainChar.loadJump();
-		}
-		else if( mainChar.isStateRunning() == false)
-		{
-			mainChar.loadRunning(componentsGroup);
-		}
-	}
+
 
 	private void backToMenuScreen(Stage stage) 
 	{
 		new Menu(stage).displayMenu();
 	} 
 
-	private void showDeathScreen(Group g) {
+	private void showDeathScreen(Group g) 
+	{
+		mediaArray[0].play();
 		ImageView death = new ImageView(DEATH);
 		ImageView oldDeath = new ImageView(OLDDEATH);
 
@@ -673,14 +711,14 @@ public abstract class GameLoop
 			}
 		});
 
-		retry.setLayoutX(550);
+		retry.setLayoutX(350);
 		retry.setLayoutY(500);
 		retry.setFont(new Font("Roboto", 15));
 		retry.setStyle("-fx-base: #AA0121");
 		retry.setTextFill(Color.BISQUE);
 		retry.setPrefSize(100, 50);
 
-		backToMenu.setLayoutX(350);
+		backToMenu.setLayoutX(550);
 		backToMenu.setLayoutY(500);
 		backToMenu.setFont(new Font("Roboto", 15));
 		backToMenu.setStyle("-fx-base: #AA0121");
@@ -701,16 +739,11 @@ public abstract class GameLoop
 
 		if(checkHighScore())
 		{
-			g.getChildren().add(death);
-			g.getChildren().add(highScoreInput);
-			g.getChildren().add(submitScore);
+			g.getChildren().addAll(death,highScoreInput,submitScore);
 		}
 		else 
-		{
-			g.getChildren().add(oldDeath);
-			g.getChildren().add(backToMenu);
-			g.getChildren().add(retry);
-
+		{			
+			g.getChildren().addAll(oldDeath,retry,backToMenu);
 		}
 	}
 
@@ -742,7 +775,6 @@ public abstract class GameLoop
 			return false;
 		}
 	}
-
 	private void editHighScore(String highScoreName)
 	{
 		try 
@@ -757,6 +789,30 @@ public abstract class GameLoop
 			System.out.println("FILE ERROR");
 		}
 		backToMenuScreen(stage);
+	}
+
+	private void checkPunching()
+	{
+		if(mainChar.isStatePunching())
+		{
+			mainChar.loadPunch();
+		}
+		else if(!mainChar.getStateCanJump())
+		{
+			mainChar.loadJump();
+		}
+	}
+
+	private void checkRunning()
+	{
+		if(!mainChar.isStateOnPlatform())
+		{
+			mainChar.loadJump();
+		}
+		else if(!mainChar.isStateRunning())
+		{
+			mainChar.loadRunning(componentsGroup);
+		}
 	}
 
 	public abstract void initStage();
