@@ -5,7 +5,7 @@ import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class MarshmallowMeyham extends Application 
+public class MarshmallowMayhem extends Application 
 {
 	@Override
 	public void start(Stage primaryStage) 

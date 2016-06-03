@@ -28,6 +28,8 @@ public class Menu
 	private final Media m = new Media(Paths.get("src/resources/MySong.mp3").toUri().toString());
     private final MediaPlayer mp = new MediaPlayer(m);
 	
+    
+    
 	public Menu (Stage primaryStage)
 	{
 		try 
@@ -166,11 +168,11 @@ public class Menu
 
 	Text textW = new Text(180,75,"W/SPACE: Jump");
 	Text textA = new Text(180,125,"A: Left");
-	Text textS = new Text(180,175,"S: Down");
-	Text textD = new Text(180,225,"D: Right");
+	Text textD = new Text(180,175,"D: Right");
+	Text textE = new Text(180,225,"E: Punch");
 	Text textRed = new Text(180,275,"Extra Life");
-	Text textBlue = new Text(180,325,"Extra Points");
-	Text textGreen = new Text(180,375,"Jump Boost");
+	Text textGreen = new Text(180,325,"Jump Boost");
+	Text textBlue = new Text(180,375,"Extra Points");
 	Text textWall = new Text(180,425,"Wall: Punch it");
 	Text textEnemy = new Text(180,475,"Enemy: Dodge it");
 
@@ -180,9 +182,9 @@ public class Menu
 	textA.setFill(Color.BISQUE);
 	textA.setLayoutX(200);
 	textA.setFont(Font.font ("Roboto", FontWeight.BOLD, 30));
-	textS.setFill(Color.BISQUE);
-	textS.setLayoutX(200);
-	textS.setFont(Font.font ("Roboto", FontWeight.BOLD, 30));
+	textE.setFill(Color.BISQUE);
+	textE.setLayoutX(200);
+	textE.setFont(Font.font ("Roboto", FontWeight.BOLD, 30));
 	textD.setFill(Color.BISQUE);
 	textD.setLayoutX(200);
 	textD.setFont(Font.font ("Roboto", FontWeight.BOLD, 30));
@@ -202,11 +204,8 @@ public class Menu
 	textEnemy.setLayoutX(200);
 	textEnemy.setFont(Font.font ("Roboto", FontWeight.BOLD, 30));
 	
-	
-	
-
 	Scene instructionsScene = new Scene(instrRoot, 1000, 600);
-	instrRoot.getChildren().addAll(backgroundImageView, instructionsBackButton, textW, textA, textS, textD, textRed, textBlue, 
+	instrRoot.getChildren().addAll(backgroundImageView, instructionsBackButton, textW, textA, textE, textD, textRed, textBlue, 
 			textGreen, textWall, textEnemy, greenKiss, blueKiss, redKiss, wall, enemy);
 
 	mStage.setScene(instructionsScene);
@@ -216,14 +215,19 @@ public class Menu
 	{
 		Group credRoot = new Group();
 		Image backgroundImage = new Image("resources/greenBackground.png", 1000, 600, false, false);
+		Image vampireImage = new Image("resources/vampireRobot.png", 50, 50, true, true);
+		
 		ImageView backgroundImageView = new ImageView(backgroundImage);
+		ImageView vampire = new ImageView(vampireImage);
+		vampire.setLayoutX(620);
+		vampire.setLayoutY(210);
+		
 		creditsBackButton.setLayoutX(440);
 		creditsBackButton.setLayoutY(525);
 		creditsBackButton.setFont(new Font("Roboto", 15));
 		creditsBackButton.setStyle("-fx-base: #AA0121");
 		creditsBackButton.setTextFill(Color.BISQUE);
 		creditsBackButton.setPrefSize(100, 50);
-
 		
 		Text creditsText = new Text(235,100,"Credits:");
 		Text bradText = new Text(215,150,"Brad Eblin");
@@ -256,10 +260,11 @@ public class Menu
 		powerUpText.setFont(Font.font ("Roboto", FontWeight.BOLD, 30));
 		
 		credRoot.getChildren().addAll(backgroundImageView, creditsBackButton, creditsText, bradText, 
-				samText, danText, nikkaText, healthText, powerUpText);
+				samText, danText, nikkaText, healthText, powerUpText, vampire);
 		Scene creditScene = new Scene(credRoot, 1000, 600);
 		mStage.setScene(creditScene);
-		danText.setOnMouseClicked(e -> mp.play());
+		vampire.setOnMouseClicked(e -> mp.play());
+		
 	}
 	
 	public void displayMenu()

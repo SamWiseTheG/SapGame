@@ -20,10 +20,9 @@ public class HUD extends RectangleComponent
 	private static final Image POWERUP = new Image("resources/greenPowerup.png");
 	int healthCountPos;
 	int x = 13;
-	int y = 11;
+	int y = 20;
 	ImageView livesView;
 	String score="0";
-//	Circle cJump = new Circle(10);
 	Circle cInvincible = new Circle(10);
 	Text highScoreText = new Text(20, 20, score);
 	Rectangle component = new Rectangle();

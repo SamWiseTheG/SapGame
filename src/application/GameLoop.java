@@ -43,11 +43,11 @@ public abstract class GameLoop
 	boolean spacePressed=false;
 	boolean cheatMode=false;
 	boolean checkDeath=false;
-	
+
 	boolean removePlatform=true;
 	boolean firstPlatform=true;
 	boolean morePlatforms=false;
-	
+
 	double jumpTimer;
 	boolean hasScoreUp = false;
 	boolean hasJump=false;
@@ -60,7 +60,7 @@ public abstract class GameLoop
 
 	double stageWidth;
 	double stageHeight;
-	
+
 	int gameSpeed = 7500;
 	int jumpHeight=150;
 	int movementSpeed=20;
@@ -74,7 +74,7 @@ public abstract class GameLoop
 
 	private static final Image DEATH = new Image("resources/dead.png");
 	private static final Image OLDDEATH = new Image("resources/oldDead.png");
-	
+
 	private final Media media = new Media(Paths.get("src/resources/MySong2.mp3").toUri().toString());
 	private final MediaPlayer mediaPlayer = new MediaPlayer(media);
 
@@ -108,7 +108,8 @@ public abstract class GameLoop
 				hud.setScore(currentScore);				
 				scene.setOnKeyPressed(k -> actPress(k));
 				scene.setOnKeyReleased(k -> actRelease(k));
-				if((System.currentTimeMillis()-startTime*1000>5000) && removePlatform)
+
+				if(score>5 && removePlatform)
 				{
 					Platform p = Platform.getPlatformsArrayList().get(Platform.getPlatformsArrayList().size()-1);
 					p.delete();
@@ -132,14 +133,11 @@ public abstract class GameLoop
 				cheatMode = false;
 				mainChar.loadRunning(componentsGroup);
 				break;
-			case SPACE:
-
-
 			default:
 				break;
 		}
 	}
-
+	
 	private void actPress(KeyEvent k)
 	{
 		switch(k.getCode())				
@@ -214,6 +212,7 @@ public abstract class GameLoop
 					downTransition.setByY(movementSpeed);
 					downTransition.play();
 				}
+				break;
 			default:
 				break;
 		}				
@@ -308,7 +307,6 @@ public abstract class GameLoop
 			if( (Math.abs(w.getMinX()-charCenterX) )<=(Math.abs(closestWall.getMinX()-charCenterX))  )
 			{
 				closestWall=w;
-				//closestWall.component.setFill(Color.BLUE);
 			}
 		}
 		return closestWall;
@@ -660,7 +658,8 @@ public abstract class GameLoop
 		new Menu(stage).displayMenu();
 	} 
 
-	private void showDeathScreen(Group g) {
+	private void showDeathScreen(Group g) 
+	{
 		ImageView death = new ImageView(DEATH);
 		ImageView oldDeath = new ImageView(OLDDEATH);
 
